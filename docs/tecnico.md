@@ -6,7 +6,7 @@ lang: es-MX
 
 ## 1. Introducción
 
-Este documento registra las decisiones metodológicas y los resultados técnicos del proyecto. La definición del problema, los objetivos, las hipótesis y los criterios de éxito están en el documento de negocio (`docs/negocio.md`). Este documento se complementa fase por fase. La versión actual cubre la **Fase 1: inventario y selección de fuentes**, que consolida el Momento A; la **Fase 3: limpieza individual** y la **Fase 4: integración y análisis exploratorio**.
+Este documento registra las decisiones metodológicas y los resultados técnicos del proyecto. La definición del problema, los objetivos, las hipótesis y los criterios de éxito están en el documento de negocio (`docs/negocio.md`). Este documento se complementa fase por fase. La versión actual cubre la **Fase 1: inventario y selección de fuentes**, que consolida el Momento A; la **Fase 3: limpieza individual**; la **Fase 4: integración y análisis exploratorio**, y la **Fase 5: modelado**.
 
 ## 2. Entorno de trabajo y organización del proyecto
 
@@ -17,8 +17,8 @@ Este documento registra las decisiones metodológicas y los resultados técnicos
 | `data/raw/` | Los tres documentos aceptados, en su forma original. No se versiona. |
 | `data/excluded/` | Los tres documentos rechazados en el Momento A. Se conservan pero no se usan. No se versiona. |
 | `data/processed/` | Conjuntos limpios e integrados (Fases 3 y 4). No se versiona. |
-| `notebooks/` | `00_momento_A`, `00_perfil_aceptados`, `01_limpieza`, `02_eda`; después `03_modelado`. |
-| `src/` | Código reutilizable: `datos.py` (rutas, carga y perfilado), `diccionario.py` (diccionario de variables), `limpieza.py` y `codificacion.py` (limpieza y reglas de codificación), `integracion.py`, `eda.py` y `graficos.py` (integración, pruebas y figuras), `anexos.py`, `momento_a.py`, `exportar_docs.py`. |
+| `notebooks/` | `00_momento_A`, `00_perfil_aceptados`, `01_limpieza`, `02_eda`, `03_modelado`. |
+| `src/` | Código reutilizable: `datos.py` (rutas, carga y perfilado), `diccionario.py` (diccionario de variables), `limpieza.py` y `codificacion.py` (limpieza y reglas de codificación), `integracion.py`, `eda.py`, `graficos.py` y `modelado.py` (integración, pruebas, figuras y agrupamiento), `anexos.py`, `momento_a.py`, `exportar_docs.py`. |
 | `app/` | Tablero en Streamlit (Fase 6). |
 | `docs/` | Documentos técnico y de negocio en `.md`, `.docx` y `.pdf`; matriz de relación y diccionario de variables en `.csv`. |
 
@@ -310,6 +310,95 @@ Con 105 pares evaluados, unos 5 resultados con *p* < 0.05 serían esperables sol
 - [x] EDA individual: univariado, bivariado y correlaciones (Spearman, ji-cuadrada y Fisher), con visualizaciones.
 - [x] EDA comparado: ánimo frente a estrés y sueño, y ánimo frente a uso de IA.
 - [x] Hallazgos documentados en este documento y cuaderno ejecutado sin errores.
+
+## 6. Fase 5 — Modelado
+
+El procedimiento está en `notebooks/03_modelado.ipynb` y las funciones en `src/modelado.py`. Las asignaciones de perfil se guardan en `data/processed/perfiles.csv` (seudónimo, perfil y coordenadas PCA).
+
+### 6.1 Modelo supervisado: no viable
+
+La Fase 0 condicionó el modelo supervisado a que la etiqueta `mejora_animo` tuviera al menos 4 casos en la clase minoritaria y a que el modelo superara la línea base. La etiqueta tiene **3 casos negativos**, tanto en el Documento 1 (n = 20) como en el núcleo (n = 17). Predecir siempre "mejora" ya acierta el 85 % y el 82 % de las veces, respectivamente. Con 3 casos, la validación cruzada estratificada admite como máximo 3 particiones, cada una con un solo caso negativo de prueba, así que el F1 de esa clase se movería en saltos de un tercio. Además, el EDA no encontró asociaciones robustas con la etiqueta. **Por estas razones no se entrenó un clasificador**: sus métricas serían engañosas. El análisis continuó con el enfoque no supervisado, que la Fase 0 definió como primera opción.
+
+### 6.2 Diseño del modelo no supervisado
+
+| Decisión | Elección | Justificación |
+|----------|----------|---------------|
+| Casos | 17 del núcleo con datos completos | No se imputa (Fase 3); se excluyen 2 casos con un faltante cada uno |
+| Variables (elegidas *a priori*) | Horas de música, música → energía, música → concentración, IEP, horas de IA, uso de IA como guía | Dos variables por bloque de la pregunta (música, estrés, IA) |
+| Validación externa | Calidad de sueño, dificultad de concentración, minutos de traslado, apoyo social, mejora de ánimo | No entran al modelo; desánimo e irritabilidad se excluyen porque forman el IEP |
+| Preprocesamiento | `log1p` en horas y estandarización z | Reduce el peso de los valores extremos (15 h de música y 8 h de IA) |
+| Algoritmos | K-Means (`n_init` = 50), contrastado con Ward y DBSCAN | Partición principal más dos métodos de contraste |
+| Selección de k | Silueta (principal), Davies-Bouldin, Calinski-Harabasz e inercia | Referencia de silueta ≥ 0.25 (`docs/negocio.md` §7) |
+| Reproducibilidad | `numpy.random.seed(42)` y `random_state=42` | — |
+
+### 6.3 Selección del número de perfiles
+
+| k | Silueta | Davies-Bouldin | Calinski-Harabasz | Tamaños | ARI frente a Ward |
+|--:|--------:|---------------:|------------------:|---------|------------------:|
+| 2 | 0.259 | 1.28 | 6.31 | 12, 5 | 1.00 |
+| **3** | **0.280** | 1.21 | **6.81** | 6, 6, 5 | 1.00 |
+| 4 | 0.265 | 0.94 | 6.64 | 6, 5, 4, 2 | 1.00 |
+| 5 | 0.250 | 0.96 | 6.11 | 6, 4, 3, 2, 2 | 1.00 |
+| 6 | 0.222 | 0.86 | 5.92 | 5, 4, 3, 2, 2, 1 | 1.00 |
+
+![Coeficiente de silueta por número de perfiles](figuras/f10_silueta_k.png)
+
+Se eligió **k = 3**. Tiene la mayor silueta y el mayor índice de Calinski-Harabasz, ningún caso con silueta negativa y grupos de tamaño equilibrado. En 200 remuestras bootstrap, su estabilidad es moderada (ARI medio de 0.74, percentil 10 de 0.41). La opción k = 2 tiene mediana 1.0, pero en el 10 % de las remuestras se reorganiza por completo.
+
+### 6.4 Perfiles identificados
+
+![Medias estandarizadas por perfil: variables del modelo (arriba) y de validación externa (abajo)](figuras/f12_perfiles_heatmap.png)
+
+| Perfil | n | Rasgos que lo definen (medianas) | Validación externa |
+|--------|--:|----------------------------------|--------------------|
+| **P1 · Escucha intensiva** | 6 | 5 h de música; percibe que la música le ayuda a concentrarse; IEP 2.25 (medio); usa la IA como guía y atajo (1.5 h) | Traslados más largos (90 min); mejora de ánimo en el 100 % |
+| **P2 · Estrés alto** | 6 | IEP 3.25 (alto); 2.25 h de música; percibe que la música lo distrae al estudiar; usa la IA como guía y atajo | Traslados más cortos (35 min); más dificultad de concentración; mejora de ánimo en el 50 % |
+| **P3 · IA como guía, estrés bajo** | 5 | Usa la IA como guía para aprender (0.5 h); 1.5 h de música, que le da energía; IEP 1.0 (bajo) | Mejora de ánimo en el 100 % |
+
+![Perfiles proyectados en las dos primeras componentes principales (62 % de la varianza)](figuras/f13_pca_perfiles.png)
+
+La primera componente (34 % de la varianza) opone el uso de la IA como guía (carga +0.61) al estrés, las horas de música y la concentración atribuida a la música (−0.38 a −0.45): es el eje que aísla al perfil P3. La segunda componente (27 %) recoge la intensidad de escucha y la energía que aporta la música (+0.53 y +0.66) frente a las horas de IA (−0.40), y separa a P1 de P2.
+
+**Validación externa** (Kruskal-Wallis entre perfiles, en variables no usadas por el modelo):
+
+| Variable | *p* | *q* | ε² |
+|----------|----:|----:|---:|
+| Minutos de traslado | 0.011 | 0.052 | 0.57 |
+| Mejora de ánimo | 0.072 | 0.181 | 0.38 |
+| Apoyo social | 0.252 | 0.390 | 0.17 |
+| Dificultad de concentración | 0.312 | 0.390 | 0.15 |
+| Calidad de sueño | 0.935 | 0.935 | 0.01 |
+
+Los perfiles difieren de forma apreciable en el tiempo de traslado y en la mejora de ánimo, que no se usaron para formarlos. No difieren en calidad de sueño.
+
+### 6.5 Contrastes y sensibilidad
+
+- **DBSCAN** (`min_samples` = 3). No encuentra grupos densos. Con `eps` ≤ 1.6 todos los casos quedan como ruido y con `eps` = 3.0 forman un solo grupo. En el punto intermedio (`eps` = 2.5) separa grupos de 11 y 5 casos, que coinciden solo parcialmente con K-Means (ARI = 0.48).
+- **Modelo ampliado (8 variables, añadiendo sueño y dificultad de concentración).** La silueta baja a 0.18 y la coincidencia con la partición principal es de ARI = 0.39.
+- **Modelo sin "usa IA como guía".** La silueta baja a 0.20 y la coincidencia es de ARI = 0.59.
+
+**Conclusión del modelado.** La estructura de grupos es **débil y sensible a la elección de variables**. Solo el conjunto parsimonioso definido *a priori* supera la referencia de silueta. Los perfiles son útiles como **herramienta descriptiva** para el tablero y para orientar conversaciones con tutores, pero no deben tratarse como una tipología estable de la población.
+
+**Lectura sustantiva.** Los perfiles reproducen las señales de la Fase 4:
+
+1. El estrés bajo se concentra en quienes usan la IA como guía para aprender.
+2. El perfil de estrés alto es el que menos se beneficia de la música: la percibe como distractora y solo la mitad reporta mejora.
+3. La escucha intensiva acompaña los traslados largos y se asocia con beneficios percibidos, sin que eso se traduzca en un estrés menor que el promedio.
+
+**Limitaciones.**
+
+- El modelo usa n = 17.
+- La variable binaria "guía" tiene mucho peso tras la estandarización.
+- El IEP no es un instrumento validado.
+- Los datos son auto-reportados.
+- Los perfiles describen asociaciones: no implican que cambiar un hábito modifique el estrés o el ánimo.
+
+### 6.6 Criterio de aceptación de la fase
+
+- [x] Modelo no supervisado (K-Means), con PCA para reducir y visualizar, y DBSCAN y Ward como contraste.
+- [x] Silueta reportada (0.28, ≥ 0.25 de referencia), junto con Davies-Bouldin, Calinski-Harabasz y estabilidad bootstrap.
+- [x] Modelo supervisado evaluado frente al criterio de la Fase 0 y la línea base; no viable, con justificación.
+- [x] Limitaciones documentadas; semilla 42.
 
 ## Anexo A. Diccionario de variables
 

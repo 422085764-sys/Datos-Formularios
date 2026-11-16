@@ -16,7 +16,7 @@ Los datos son observacionales y auto-reportados (n = 19 tras la integración): l
 | Fase 2: problemática, solución y KPI | ✅ | `docs/negocio.md` |
 | Fase 3: limpieza | ✅ | `notebooks/01_limpieza.ipynb` |
 | Fase 4: integración y EDA | ✅ | `notebooks/02_eda.ipynb` |
-| Fase 5: modelado | ⏳ | `notebooks/03_modelado.ipynb` |
+| Fase 5: modelado | ✅ | `notebooks/03_modelado.ipynb` |
 | Fase 6: tablero | ⏳ | `app/app.py` |
 | Fase 7: documentación final | ⏳ | `docs/`, este README |
 
@@ -28,7 +28,7 @@ Los datos son observacionales y auto-reportados (n = 19 tras la integración): l
 │   ├── processed/    # datos limpios e integrados (no se versiona)
 │   └── excluded/     # 3 documentos rechazados en el Momento A (no se versiona)
 ├── notebooks/        # 00_momento_A, 00_perfil_aceptados, 01_limpieza, 02_eda, 03_modelado
-├── src/              # datos.py, diccionario.py, limpieza.py, codificacion.py, integracion.py, eda.py, graficos.py, momento_a.py, anexos.py, exportar_docs.py
+├── src/              # datos.py, diccionario.py, limpieza.py, codificacion.py, integracion.py, eda.py, graficos.py, modelado.py, momento_a.py, anexos.py, exportar_docs.py
 ├── app/              # tablero Streamlit
 ├── docs/             # tecnico y negocio (.md/.docx/.pdf), matriz y diccionario (.csv)
 ├── requirements.txt
@@ -54,7 +54,7 @@ Los datos no forman parte del repositorio porque contienen números de cuenta. H
 Ejecutar los cuadernos desde la carpeta `notebooks/`. En Windows, `PYTHONUTF8=1` es necesario: sin esa variable, `jupyter-execute` lee el `.ipynb` con la codificación del sistema y corrompe los acentos del código.
 
 ```bash
-cd notebooks && PYTHONUTF8=1 ../.venv/Scripts/jupyter-execute --inplace 00_momento_A.ipynb 00_perfil_aceptados.ipynb 01_limpieza.ipynb 02_eda.ipynb
+cd notebooks && PYTHONUTF8=1 ../.venv/Scripts/jupyter-execute --inplace 00_momento_A.ipynb 00_perfil_aceptados.ipynb 01_limpieza.ipynb 02_eda.ipynb 03_modelado.ipynb
 ```
 
 Regenerar los documentos en Word y PDF (usa pandoc incluido en `pypandoc_binary`; PDF con xelatex si existe, si no con Microsoft Edge):

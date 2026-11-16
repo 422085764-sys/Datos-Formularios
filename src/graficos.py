@@ -116,6 +116,50 @@ def heatmap_spearman(rho: pd.DataFrame, pv: pd.DataFrame, etiquetas: dict[str, s
     return fig, ax
 
 
+def linea_metrica(x, y, titulo: str, xlabel: str, ylabel: str, destacar=None, referencia=None):
+    """Una métrica por k (una sola escala); marca opcional del k elegido y línea de referencia."""
+    fig, ax = plt.subplots(figsize=(4.6, 3.0))
+    ax.plot(x, y, color=CATEGORICA[0], linewidth=2, marker="o", markersize=7,
+            markeredgecolor=SUPERFICIE, markeredgewidth=1.5, zorder=3)
+    if referencia is not None:
+        ax.axhline(referencia, color=TENUE, linewidth=1, linestyle="--")
+        ax.text(x[0], referencia, f"referencia {referencia}", ha="left", va="bottom", fontsize=8, color=TENUE)
+    if destacar is not None:
+        i = list(x).index(destacar)
+        ax.scatter([x[i]], [y[i]], s=140, facecolor="none", edgecolor=TINTA, linewidth=1.5, zorder=4)
+        ax.annotate(f"k = {destacar}", (x[i], y[i]), xytext=(12, -14), textcoords="offset points",
+                    fontsize=8.5, color=TINTA_2)
+    ax.set_xticks(list(x))
+    ax.set_xlabel(xlabel)
+    ax.set_ylabel(ylabel)
+    ax.set_title(titulo)
+    return fig, ax
+
+
+def heatmap_perfiles(medias_z: pd.DataFrame, etiquetas: dict[str, str], titulo: str, anotaciones=None):
+    """Medias estandarizadas por perfil (filas = variables, columnas = perfiles), escala divergente."""
+    fig, ax = plt.subplots(figsize=(6.2, 0.42 * len(medias_z) + 1.4))
+    lim = max(1.0, float(np.nanmax(np.abs(medias_z.values))))
+    im = ax.imshow(medias_z.values, cmap=DIVERGENTE, vmin=-lim, vmax=lim, aspect="auto")
+    ax.set_yticks(range(len(medias_z)), [etiquetas.get(i, i) for i in medias_z.index])
+    ax.set_xticks(range(medias_z.shape[1]), medias_z.columns)
+    ax.xaxis.tick_top()
+    ax.grid(False)
+    for s in ax.spines.values():
+        s.set_visible(False)
+    textos = anotaciones if anotaciones is not None else medias_z.round(2).astype(str)
+    for i in range(medias_z.shape[0]):
+        for j in range(medias_z.shape[1]):
+            v = medias_z.iat[i, j]
+            ax.text(j, i, textos.iat[i, j], ha="center", va="center", fontsize=8,
+                    color="#ffffff" if abs(v) > 0.65 * lim else TINTA)
+    cb = fig.colorbar(im, ax=ax, shrink=0.8)
+    cb.set_label("Media estandarizada (z)")
+    cb.outline.set_visible(False)
+    ax.set_title(titulo, pad=28)
+    return fig, ax
+
+
 def dispersion_por_grupo(df: pd.DataFrame, x: str, y: str, grupo: str, niveles: list, etiquetas: list[str],
                          titulo: str, xlabel: str, ylabel: str):
     """Dispersión con hasta 3 grupos y recta de tendencia (mínimos cuadrados) por grupo."""
