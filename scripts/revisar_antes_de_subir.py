@@ -120,7 +120,9 @@ def main() -> int:
             continue  # binarios sin texto legible
         datos = contenido(ruta)
         nums = set(NUMERO.findall(datos))
-        mails = set(CORREO.findall(datos)) - CORREOS_PERMITIDOS
+        # Los correos noreply de GitHub son públicos por diseño (no exponen datos personales)
+        mails = {m for m in set(CORREO.findall(datos)) - CORREOS_PERMITIDOS
+                 if not m.endswith(b"@users.noreply.github.com")}
         if nums:
             bloqueos.append(f"Posible número de cuenta en {f}: {len(nums)} coincidencia(s), "
                             f"p. ej. {next(iter(nums))[:2].decode()}*******")
