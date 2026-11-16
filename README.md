@@ -130,6 +130,20 @@ En ambos casos el tablero solo muestra cifras agregadas y oculta cualquier selec
 
 pandas, numpy, scipy.stats, scikit-learn, matplotlib, seaborn, plotly, nltk, streamlit, nbformat/nbclient, pandoc (`pypandoc_binary`) y Git. Las versiones exactas están en `requirements.txt`. No se usaron ydata-profiling ni pandera, que eran opcionales: el perfilado y la validación de estructura se implementaron en `src/datos.py`.
 
+## Antes de subir cambios a GitHub
+
+Revisa qué se subiría y si hay datos personales. El script lista los commits pendientes, los archivos nuevos o modificados y lo que protege el `.gitignore`. Termina con error si encuentra datos, secretos, números de cuenta o correos:
+
+```bash
+.venv/Scripts/python scripts/revisar_antes_de_subir.py --historial
+```
+
+`scripts/reescribir_historial.sh` limpia el historial de commits. Quita las líneas `Co-Authored-By` y, opcionalmente, cambia el correo de autor por tu correo *noreply* de GitHub (Settings → Emails). Primero crea un respaldo y no sube nada; al final indica el `git push --force-with-lease` que debes ejecutar:
+
+```bash
+bash scripts/reescribir_historial.sh --simular --email TU_ID+usuario@users.noreply.github.com
+```
+
 ## Privacidad
 
 - Los números de cuenta se sustituyen por un seudónimo HMAC-SHA256 con clave secreta, que no se versiona.
