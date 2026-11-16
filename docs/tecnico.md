@@ -6,7 +6,7 @@ lang: es-MX
 
 ## 1. Introducción
 
-Este documento registra las decisiones metodológicas y los resultados técnicos del proyecto. La definición del problema, los objetivos, las hipótesis y los criterios de éxito están en el documento de negocio (`docs/negocio.md`). Este documento se complementa fase por fase. La versión actual cubre la **Fase 1: inventario y selección de fuentes**, que consolida el Momento A; la **Fase 3: limpieza individual**; la **Fase 4: integración y análisis exploratorio**; la **Fase 5: modelado**, y la **Fase 6: tablero analítico**.
+Este documento registra las decisiones metodológicas y los resultados técnicos del proyecto. La definición del problema, los objetivos, las hipótesis y los criterios de éxito están en el documento de negocio (`docs/negocio.md`). Cubre las fases técnicas del proyecto: inventario y selección de fuentes (Fase 1, que consolida el Momento A), limpieza (Fase 3), integración y análisis exploratorio (Fase 4), modelado (Fase 5) y tablero (Fase 6). Cierra con las conclusiones técnicas y las instrucciones de reproducibilidad (Fase 7).
 
 ## 2. Entorno de trabajo y organización del proyecto
 
@@ -18,7 +18,7 @@ Este documento registra las decisiones metodológicas y los resultados técnicos
 | `data/excluded/` | Los tres documentos rechazados en el Momento A. Se conservan pero no se usan. No se versiona. |
 | `data/processed/` | Conjuntos limpios e integrados (Fases 3 y 4). No se versiona. |
 | `notebooks/` | `00_momento_A`, `00_perfil_aceptados`, `01_limpieza`, `02_eda`, `03_modelado`. |
-| `src/` | Código reutilizable: `datos.py` (rutas, carga y perfilado), `diccionario.py` (diccionario de variables), `limpieza.py` y `codificacion.py` (limpieza y reglas de codificación), `integracion.py`, `eda.py`, `graficos.py` y `modelado.py` (integración, pruebas, figuras y agrupamiento), `tablero.py` (indicadores del tablero), `anexos.py`, `momento_a.py`, `exportar_docs.py`. |
+| `src/` | Código reutilizable: `datos.py` (rutas, carga y perfilado), `diccionario.py` (diccionario de variables), `limpieza.py` y `codificacion.py` (limpieza y reglas de codificación), `integracion.py`, `eda.py`, `graficos.py` y `modelado.py` (integración, pruebas, figuras y agrupamiento), `tablero.py` (indicadores del tablero), `texto.py` (análisis de texto con NLTK), `anexos.py`, `momento_a.py`, `exportar_docs.py`. |
 | `app/` | Tablero en Streamlit (`app.py`, Fase 6). |
 | `docs/` | Documentos técnico y de negocio en `.md`, `.docx` y `.pdf`; matriz de relación y diccionario de variables en `.csv`. |
 
@@ -117,7 +117,7 @@ Las hipótesis quedan operacionalizadas con las siguientes variables:
 | H3. Géneros musicales y estados positivos | `m_genero_frecuente`, `m_generos_emocion` |
 | H4. Moderación por uso de IA | `m_animo_antes_despues`, `ia_horas_dia`, `ia_guia_vs_atajo`, `ia_estres`, `ia_independencia` |
 
-Cuatro variables de texto libre sin papel en las hipótesis no se codificarán: artistas favoritos, cambio en la forma de estudiar, proceso de verificación de la información y reglas personales de uso de la IA. Se reservan para un análisis descriptivo de texto con NLP. El diccionario completo está en el Anexo A y en `docs/diccionario_variables.csv`.
+Cuatro variables de texto libre sin papel en las hipótesis no se codificarán: artistas favoritos, cambio en la forma de estudiar, proceso de verificación de la información y reglas personales de uso de la IA. Se analizan de forma descriptiva con NLTK en la Fase 4 (sección 5.7). El diccionario completo está en el Anexo A y en `docs/diccionario_variables.csv`.
 
 ### 3.6 Criterio de aceptación de la fase
 
@@ -295,7 +295,29 @@ Con 105 pares evaluados, unos 5 resultados con *p* < 0.05 serían esperables sol
 | 4. IEP por perfil de horas | Baja: 2.1 · Media: 2.5 · Alta: 2.4 (mediana 2.5 en los tres; Kruskal-Wallis *p* = 0.87) |
 | 5. Uso de IA por nivel de IEP | Bajo: 75 % la usa como guía (n = 4) · Medio: 22 % (n = 9) · Alto: 0 % (n = 5); mediana de horas de IA de 1.25 a 1.5 h en los tres niveles |
 
-### 5.7 Hallazgos e implicaciones
+### 5.7 Análisis descriptivo de texto libre
+
+Las preguntas abiertas que no se codificaron se resumieron con **NLTK**:
+
+1. Normalización del texto.
+2. Tokenización con `RegexpTokenizer` (palabras de 3 o más letras).
+3. Eliminación de palabras vacías con una lista propia en español, para no depender de descargar corpus externos.
+4. Conteo de frecuencias con `FreqDist` y de bigramas.
+
+Se reportan los términos que aparecen al menos 2 veces y en cuántas respuestas aparece cada uno. La figura se elaboró con **seaborn**, con la misma paleta que el resto del documento.
+
+![Artistas mencionados por 2 o más estudiantes (Documento 1)](figuras/f14_artistas.png)
+
+| Pregunta | Términos y bigramas más frecuentes | Lectura |
+|----------|------------------------------------|---------|
+| Artistas favoritos | Bad Bunny (4); Alan Walker, Morat, The Weeknd, Latin Mafia y Luis Miguel (2 cada uno) | Gustos muy diversos, coherentes con la variedad de géneros |
+| Experiencia en que una canción cambió el ánimo | "música", "canción", "pongo", "motiva", "ejercicio" | Uso **deliberado** de la música para activarse |
+| Verificación de la información de la IA | "información", "fuentes", "comparo"; bigramas "comparo información" (3) y "fuentes confiables" (2) | La verificación más común es contrastar con otras fuentes |
+| Cambio en la forma de estudiar con IA | "estudiar", "entender", "mejor", "temas", "rápido"; bigrama "entender mejor" (3) | La IA se describe como apoyo para comprender y como forma de ahorrar tiempo |
+
+Estos patrones coinciden con los hallazgos cuantitativos: la música se usa de forma funcional y la IA se valora sobre todo como apoyo para comprender. El análisis es descriptivo y no forma parte de la evaluación de hipótesis.
+
+### 5.8 Hallazgos e implicaciones
 
 1. **El beneficio de la música se percibe, pero no se refleja en el bienestar general.** El 85 % atribuye a la música una mejora de ánimo, y ese beneficio crece con las horas de escucha. Sin embargo, los indicadores de bienestar del Documento 2 no varían con los hábitos musicales. La lectura más coherente es que el efecto percibido es **situacional e inmediato**, como acompañar un traslado o una tarea, y no un rasgo del estado de ánimo general.
 2. **La modalidad de uso de IA importa más que la cantidad.** Usar la IA como guía para aprender va con menos estrés percibido; las horas de uso no. Es la señal más robusta del estudio, aunque no supera la corrección por comparaciones múltiples.
@@ -304,7 +326,7 @@ Con 105 pares evaluados, unos 5 resultados con *p* < 0.05 serían esperables sol
 
 **Limitaciones.** La muestra es pequeña (potencia suficiente solo para efectos grandes). Los datos son auto-reportados y transversales. La codificación del texto libre implica decisiones del equipo. El IEP no es un instrumento validado. La etiqueta de mejora tiene poca variabilidad.
 
-### 5.8 Criterio de aceptación de la fase
+### 5.9 Criterio de aceptación de la fase
 
 - [x] Unión interna por seudónimo de los Documentos 1, 2 y 3, con registros conservados y perdidos reportados.
 - [x] EDA individual: univariado, bivariado y correlaciones (Spearman, ji-cuadrada y Fisher), con visualizaciones.
@@ -443,6 +465,85 @@ Lee los conjuntos procesados y seudonimizados de `data/processed/`: `integrado_1
 - [x] Filtros por género musical, semestre, horas y estrés, más modalidad de uso de IA.
 - [x] Visualizaciones interactivas con Plotly dentro de Streamlit.
 - [x] Se ejecuta con `streamlit run app/app.py`; probado con `AppTest` y en el navegador.
+
+## 8. Conclusiones técnicas
+
+**Respuesta a la pregunta de investigación.** Con los datos disponibles (n = 19 a 24 estudiantes de 7.º semestre):
+
+1. **Hábitos asociados con un mejor ánimo reportado.** El 85 % afirma que la música mejora su ánimo. Quienes lo afirman escuchan más horas (mediana de 5 frente a 1.5 h), y las horas de escucha se asocian con percibir que la música da energía y ayuda a concentrarse. **No se encontró que un género o un momento de escucha concreto** se asocie con mejor ánimo o menor estrés. La música se escucha sobre todo en los traslados (75 %).
+2. **Relación con el estrés académico.** Los beneficios atribuidos a la música no se reflejan en los indicadores generales de bienestar: ninguna variable musical se correlaciona con desánimo, irritabilidad, IEP o calidad de sueño (|ρ| ≤ 0.23). El efecto percibido parece **situacional**.
+3. **Papel del uso de IA.** No importa la cantidad sino la **modalidad**. Quienes usan la IA como guía para aprender tienen un IEP menor (1.0 frente a 2.5). Es la señal más consistente: se mantiene sin atípicos y define uno de los tres perfiles del modelado. La moderación de la relación entre música y estrés por el uso de IA solo se observa de forma descriptiva.
+4. **Contexto.** Los traslados más largos se asocian con peor calidad de sueño (ρ = −0.51), lo que respalda la problemática.
+
+**Estado de la hipótesis.** Se respalda parcialmente y solo como señal exploratoria. Ninguna asociación supera la corrección de Benjamini-Hochberg, y no se confirmó el papel de géneros ni de momentos específicos.
+
+**Criterios de éxito de `docs/negocio.md` §7:**
+
+| Criterio | Estado |
+|----------|--------|
+| Datos limpios e integrados, con pérdidas reportadas | Cumplido: 19 en el núcleo y 24 en música + IA |
+| Variables codificadas con reglas y bitácora, sin imputación | Cumplido: 82 variables derivadas y 15 decisiones documentadas |
+| H1 a H4 evaluadas con estadístico, *p* y efecto | Cumplido: 23 pruebas, con *q* de Benjamini-Hochberg |
+| Agrupamiento interpretable con silueta ≥ 0.25 | Cumplido con el conjunto *a priori* (0.28); la estructura es sensible a las variables elegidas |
+| Supervisado frente a línea base | Evaluado: no viable (3 casos en la clase minoritaria); se reporta como resultado |
+| Tablero ejecutable con KPI y filtros | Cumplido y probado |
+| Documentos `.md`, `.docx` y `.pdf`; repositorio reproducible y anonimizado | Cumplido |
+
+**Limitaciones generales.**
+
+- **Muestra pequeña** de un solo grupo: potencia solo para efectos grandes y sin posibilidad de generalizar.
+- **Datos auto-reportados y transversales:** no permiten establecer causalidad.
+- **Codificación de texto libre:** implica decisiones del equipo, aunque documentadas y revisadas caso por caso.
+- **IEP:** es un indicador indirecto, no un instrumento validado.
+- **Etiqueta de mejora de ánimo:** casi no tiene variabilidad.
+
+**Recomendaciones para estudios futuros:**
+
+- Usar preguntas cerradas con escalas Likert en los formularios, para evitar codificar texto libre.
+- Medir el estrés y el sueño con instrumentos validados, como la Escala de Estrés Percibido (PSS-10) y el Índice de Calidad de Sueño de Pittsburgh.
+- Ampliar la muestra a varios semestres.
+- Considerar mediciones repetidas para estudiar cambios en el tiempo.
+
+## 9. Reproducibilidad
+
+**Entorno.** Python 3.14 en un entorno virtual con las versiones fijadas en `requirements.txt`. Las semillas se fijan con `numpy.random.seed(42)` y `random_state=42`.
+
+**Datos.** Los tres archivos originales deben colocarse en `data/raw/`. La clave del seudónimo (`data/raw/.clave_seudonimo`) se genera automáticamente la primera vez que se ejecuta la limpieza. Para obtener los **mismos** identificadores en otra máquina hay que copiar esa clave, que nunca se versiona.
+
+**Orden de ejecución** (desde `notebooks/`, con `PYTHONUTF8=1` en Windows):
+
+| Paso | Cuaderno o comando | Produce |
+|-----:|--------------------|---------|
+| 1 | `00_momento_A.ipynb`, `00_perfil_aceptados.ipynb` | Perfil de las fuentes, `docs/matriz_relacion.csv`, `docs/diccionario_variables.csv` |
+| 2 | `01_limpieza.ipynb` | `data/processed/doc*_clean.csv`, `docs/variables_codificadas.csv` |
+| 3 | `02_eda.ipynb` | `data/processed/integrado_*.csv`, `docs/pruebas_hipotesis.csv`, figuras f1 a f9 y f14 |
+| 4 | `03_modelado.ipynb` | `data/processed/perfiles.csv`, figuras f10 a f13 |
+| 5 | `streamlit run app/app.py` | Tablero interactivo |
+| 6 | `python src/anexos.py` y `python src/exportar_docs.py docs/*.md` | Anexo del diccionario; documentos `.docx` y `.pdf` |
+
+La cadena completa se volvió a ejecutar desde los datos crudos durante la Fase 7, sin errores y con resultados idénticos (sección 9.1).
+
+### 9.1 Verificación de la re-ejecución
+
+Durante la Fase 7 se respaldaron y eliminaron todos los conjuntos de `data/processed/`. Después se ejecutaron los cinco cuadernos en orden con `jupyter-execute`, a partir de los archivos crudos. Resultados:
+
+- Los cinco cuadernos terminaron **sin errores**, en unos 37 segundos.
+- Los seis conjuntos regenerados (`doc1_musica_clean`, `doc2_bienestar_clean`, `doc3_ia_clean`, `integrado_123`, `integrado_13` y `perfiles`) son **idénticos** a los respaldados (`pandas.testing.assert_frame_equal`).
+- Las figuras también resultaron idénticas byte por byte.
+- El tablero se volvió a probar con `AppTest` sobre los datos regenerados, sin excepciones.
+
+### 9.2 Conversión de documentos y control de versiones
+
+**Conversión de documentos.** El enunciado propone pandoc con `--pdf-engine=xelatex`. El equipo de desarrollo no tiene un motor LaTeX, así que `src/exportar_docs.py` usa el pandoc incluido en `pypandoc_binary` y, si no encuentra `xelatex`, genera el PDF imprimiendo el HTML de pandoc con Microsoft Edge en modo *headless*. Con LaTeX instalado (por ejemplo, MiKTeX), el script usa `xelatex` automáticamente. Los comandos equivalentes del enunciado son:
+
+```
+pandoc docs/tecnico.md -o docs/tecnico.docx --resource-path=docs
+pandoc docs/tecnico.md -o docs/tecnico.pdf --pdf-engine=xelatex --resource-path=docs
+pandoc docs/negocio.md -o docs/negocio.docx
+pandoc docs/negocio.md -o docs/negocio.pdf --pdf-engine=xelatex
+```
+
+**Control de versiones.** El repositorio tiene un commit por etapa (Momento A y Fases 0 a 7). La carpeta `data/`, el entorno virtual, las cachés y los puntos de control de Jupyter están excluidos en `.gitignore`. Antes de cada commit se verificó que ningún archivo versionado contuviera números de cuenta ni correos.
 
 ## Anexo A. Diccionario de variables
 

@@ -17,6 +17,7 @@ lang: es-MX
 | 2026-11-15 | Fase 4: integración y EDA | `notebooks/02_eda.ipynb` (ejecutado sin errores); conjuntos integrados (n = 19 y n = 24) en `data/processed/`; 23 pruebas de hipótesis con corrección de Benjamini-Hochberg (`docs/pruebas_hipotesis.csv`); 9 figuras en `docs/figuras/`; KPI preliminares; sección 5 de `docs/tecnico.md` | Concluido |
 | 2026-11-15 | Fase 5: modelado | `notebooks/03_modelado.ipynb` (ejecutado sin errores); 3 perfiles por K-Means (silueta 0.28) contrastados con Ward, DBSCAN, bootstrap y sensibilidad; modelo supervisado descartado con justificación; `data/processed/perfiles.csv`; 4 figuras; sección 6 de `docs/tecnico.md` | Concluido |
 | 2026-11-15 | Fase 6: tablero analítico | `app/app.py` (Streamlit + Plotly) con los 5 KPI, filtros por género, semestre, horas, estrés y uso de IA, 6 vistas y umbral de anonimato de 3 estudiantes; `src/tablero.py`; probado con `AppTest` y en el navegador; sección 7 de `docs/tecnico.md` | Concluido |
+| 2026-11-15 | Fase 7: documentación y Git | Análisis de texto con NLTK y figura con seaborn; conclusiones, criterios de éxito y reproducibilidad (`docs/tecnico.md` §8 y §9); resultados y recomendaciones (sección 10); README final; re-ejecución completa del pipeline; documentos en `.md`, `.docx` y `.pdf`; repositorio con un commit por etapa | Concluido |
 
 ## 1. Antecedentes: resultado del Momento A
 
@@ -221,3 +222,72 @@ Las cuatro hipótesis y las tres audiencias quedan cubiertas por al menos un ind
 - [x] Pregunta e hipótesis enlazadas con los indicadores (9.2 y 9.5).
 - [x] Solución descrita: audiencias, vistas, filtros y protección de datos (9.3).
 - [x] Cinco KPI definidos con fórmula, fuente, desagregación y visualización (9.4).
+
+## 10. Resultados y recomendaciones
+
+Esta sección resume, para las partes interesadas, lo que el proyecto encontró y cómo puede usarse. El detalle metodológico está en `docs/tecnico.pdf` y los datos pueden explorarse en el tablero (`streamlit run app/app.py`).
+
+### 10.1 Respuesta a la pregunta
+
+> ¿Qué hábitos musicales se asocian con un mejor estado de ánimo reportado en estudiantes de MAC, y cómo se relacionan con su nivel de estrés académico y su uso de IA?
+
+- **La música se percibe como un apoyo inmediato.** El 85 % de los estudiantes reporta que la música mejora su ánimo, y quienes lo reportan escuchan más horas al día. La escuchan sobre todo en los **traslados** (75 %), al estudiar y al hacer ejercicio. **No apareció un género ni un momento** de escucha que se asocie con más bienestar.
+- **Ese apoyo no se refleja en el estrés general.** Los indicadores de bienestar (desánimo, irritabilidad, sueño) no varían con los hábitos musicales. La música parece ayudar en el momento, no cambiar el estado de ánimo de fondo.
+- **En la IA importa más el cómo que el cuánto.** Quienes usan la IA **como guía para aprender** reportan menos estrés que quienes la usan también o solo como atajo. Las horas de uso no marcan diferencia.
+- **El contexto pesa.** Los traslados más largos se asocian con peor calidad de sueño, y el 78 % del grupo muestra un nivel de estrés percibido medio o alto.
+
+Son **asociaciones exploratorias**. Con alrededor de 19 estudiantes, ninguna se confirma estadísticamente tras corregir por comparaciones múltiples, y los datos no permiten afirmar que un hábito *cause* un cambio en el ánimo o el estrés.
+
+### 10.2 Indicadores clave (valores finales)
+
+| KPI | Valor |
+|-----|-------|
+| 1. % que reporta mejora de ánimo con música | **85 %** (17 de 20) |
+| 2. Horas de escucha por perfil (mediana) | Escucha intensiva 5 h · Estrés alto 2.25 h · IA como guía 1.5 h |
+| 3. Géneros más asociados a bienestar | Sin diferencias significativas; urbano 100 % (n = 3), pop 83 % (n = 6), rock/metal 67 % (n = 4) de mejora en el núcleo |
+| 4. Estrés por perfil de hábitos (IEP medio) | Estrés alto 3.25 · Escucha intensiva 2.4 · IA como guía 1.5 |
+| 5. Uso de IA como guía por nivel de estrés | Bajo 75 % · Medio 22 % · Alto 0 % |
+
+### 10.3 Perfiles de estudiantes
+
+| Perfil | Rasgos | Qué sugiere |
+|--------|--------|-------------|
+| **Escucha intensiva** (6) | Mucha música; la percibe útil para concentrarse; traslados largos | La música acompaña trayectos largos; el estrés es medio |
+| **Estrés alto** (6) | Estrés alto; la música lo distrae al estudiar; solo la mitad siente mejora con música | Grupo prioritario para acompañamiento |
+| **IA como guía, estrés bajo** (5) | Usa la IA para aprender; poco tiempo de IA y de música | Patrón de uso de IA asociado con bienestar |
+
+Los perfiles son una guía descriptiva: con otros datos podrían reorganizarse.
+
+### 10.4 Recomendaciones
+
+Las recomendaciones se derivan de asociaciones, por lo que se proponen como **acciones de bajo costo para probar y evaluar**, no como intervenciones de efecto comprobado.
+
+**Para estudiantes:**
+
+- Usar la música de forma intencional donde la reportan útil sus compañeros (traslados, ejercicio, tareas sencillas). Si les distrae al estudiar, como reporta el perfil de estrés alto, conviene probar el silencio en tareas de alta concentración.
+- Usar la IA como guía para comprender (pedir explicaciones y verificar con otras fuentes) en lugar de solo como atajo para terminar.
+
+**Para tutores:**
+
+- Prestar atención a señales del perfil de estrés alto: desánimo frecuente, irritabilidad y dificultad para concentrarse.
+- Usar el tablero como apoyo para conversar sobre hábitos de estudio, no como diagnóstico.
+
+**Para la coordinación de MAC:**
+
+- Considerar talleres breves sobre el **uso de la IA como herramienta de aprendizaje** (cómo preguntar, verificar y comprender), dado que esa modalidad se asocia con menos estrés.
+- Tener en cuenta el peso de los traslados en el sueño al planear horarios y actividades.
+- Para medir el efecto de cualquier acción, repetir el levantamiento con preguntas cerradas e instrumentos validados (por ejemplo, la Escala de Estrés Percibido), con más estudiantes y en más de un momento del semestre.
+
+### 10.5 Criterios de éxito
+
+Los criterios de éxito de la sección 7 se cumplieron:
+
+- datos integrados con pérdidas reportadas;
+- variables codificadas con reglas documentadas y sin imputación;
+- hipótesis evaluadas con efecto y corrección por comparaciones múltiples;
+- perfiles con silueta de 0.28;
+- modelo supervisado evaluado y descartado con justificación;
+- tablero funcional;
+- documentación completa en tres formatos.
+
+El estado de cada criterio se detalla en `docs/tecnico.md` §8.
