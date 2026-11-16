@@ -56,6 +56,22 @@ def tabla_accesible(df: pd.DataFrame, etiqueta: str = "Ver datos de la gráfica"
         st.dataframe(df, width="stretch")
 
 
+def grafica_conteo(conteos: pd.Series, titulo: str, xaxis: str, total: int, nota: str = "",
+                   minimo: int = tb.MIN_MENCIONES, color: str = AZUL):
+    """Barras de una clasificación (menciones por opción); omite opciones con menos de `minimo`."""
+    conteos = conteos[conteos >= minimo].sort_values()
+    if conteos.empty:
+        st.info(f"{titulo}: ninguna opción alcanza {minimo} menciones con la selección actual.")
+        return
+    st.plotly_chart(barras_h(conteos.index, conteos.values, titulo, xaxis,
+                             [f"{int(v)} ({v / total:.0%})" for v in conteos.values],
+                             [f"{i}: {int(v)} de {total} estudiantes" for i, v in conteos.items()], color=color),
+                    width="stretch")
+    if nota:
+        st.caption(nota)
+    tabla_accesible(conteos.rename("estudiantes").to_frame())
+
+
 def aviso_n(n: int, minimo: int = tb.MIN_N) -> bool:
     """minimo = MIN_N: estudiantes en la selección; minimo = 1: grupos que ya cumplen el umbral."""
     if n < minimo:
@@ -157,6 +173,20 @@ with tabs[0]:
         c[4].metric("Usan la IA como guía", f"{(d['modalidad_ia'] == tb.MODALIDAD['guia']).mean():.0%}")
         c[4].caption("Sin niveles de estrés con al menos 3 estudiantes")
 
+    # Clasificaciones destacadas de la selección (cada una con su conteo)
+    def destacado(serie: pd.Series, etiqueta: str) -> str:
+        serie = serie[serie >= tb.MIN_MENCIONES]
+        if serie.empty:
+            return f"**{etiqueta}:** sin opción con {tb.MIN_MENCIONES}+ menciones"
+        return f"**{etiqueta}:** {serie.idxmax()} ({int(serie.max())} de {len(d)})"
+
+    st.markdown(" · ".join([
+        destacado(tb.top_artistas(d), "Artista más mencionado"),
+        destacado(tb.conteo_banderas(d, tb.PLATAFORMAS), "Plataforma principal"),
+        destacado(tb.conteo_banderas(d, tb.CARACTERISTICAS), "Lo que más influye de una canción"),
+        destacado(tb.conteo_banderas(d, tb.FASES_IA), "Uso principal de la IA"),
+    ]))
+
     st.divider()
     st.subheader("Lo que muestran los datos")
     st.markdown(
@@ -198,9 +228,29 @@ with tabs[1]:
     fig = go.Figure(go.Histogram(x=h, xbins=dict(start=0, end=16, size=1), marker_color=AZUL,
                                  hovertemplate="%{x} h: %{y} estudiantes<extra></extra>"))
     fig.add_vline(x=h.median(), line_color="#0b0b0b", line_width=2,
-                  annotation_text=f"mediana {h.median():.1f} h", annotation_position="top right")
+                  annotation_text=f"mediana {h.median():.1f} h", annotation_position="top right",
+                  annotation=dict(bgcolor="rgba(252,252,251,0.9)", font=dict(color="#0b0b0b")))
     st.plotly_chart(estilo(fig, f"Horas diarias de música (n = {len(h)})", 300, "Horas por día", "Estudiantes"),
                     width="stretch")
+
+    st.subheader("Preferencias musicales")
+    st.caption(f"Clasificaciones de respuestas abiertas. Se muestran las opciones mencionadas por al menos "
+               f"{tb.MIN_MENCIONES} estudiantes de la selección; un estudiante puede mencionar varias.")
+    a, b = st.columns(2)
+    with a:
+        grafica_conteo(tb.top_artistas(d), "Artistas más mencionados", "Estudiantes que lo mencionan", len(d),
+                       "Lista libre de 5 artistas favoritos, separada y normalizada con NLTK. La diversidad es "
+                       "alta: pocos artistas se repiten.")
+    with b:
+        grafica_conteo(tb.conteo_banderas(d, tb.PLATAFORMAS), "Plataformas de escucha", "Estudiantes", len(d))
+    a, b = st.columns(2)
+    with a:
+        grafica_conteo(tb.conteo_banderas(d, tb.CARACTERISTICAS), "Qué de una canción influye en sus emociones",
+                       "Estudiantes", len(d))
+    with b:
+        grafica_conteo(tb.conteo_banderas(d, tb.EMOCION), "Géneros que asocian con emociones",
+                       "Estudiantes que lo mencionan", len(d),
+                       "Pregunta: «¿Qué géneros te hacen sentir feliz, tranquilo, triste o motivado?»")
 
 # ------------------------------------------------------------------------------------------
 # Música y bienestar
@@ -273,12 +323,16 @@ with tabs[3]:
                             width="stretch")
     herr = {"ia_gemini": "Gemini", "ia_chatgpt": "ChatGPT", "ia_claude": "Claude", "ia_deepseek": "DeepSeek",
             "ia_notebooklm": "NotebookLM", "ia_copilot": "Copilot", "ia_qwen": "Qwen"}
-    s = d[list(herr)].sum().rename(index=herr).sort_values()
-    s = s[s >= tb.MIN_N]
-    if len(s):
-        st.plotly_chart(barras_h(s.index, s.values, "Herramientas de IA más usadas", "Estudiantes",
-                                 [f"{int(v)}" for v in s.values], [f"{i}: {int(v)} de {len(d)}" for i, v in s.items()]),
-                        width="stretch")
+    st.subheader("Cómo y para qué usan la IA")
+    grafica_conteo(d[list(herr)].sum().rename(index=herr).astype(int), "Herramientas de IA más usadas",
+                   "Estudiantes", len(d))
+    a, b = st.columns(2)
+    with a:
+        grafica_conteo(tb.conteo_banderas(d, tb.FASES_IA), "Fase del estudio en que más la usan", "Estudiantes",
+                       len(d), color=AQUA)
+    with b:
+        grafica_conteo(tb.motivos_ia(d), "Motivo principal para recurrir a la IA", "Estudiantes", len(d),
+                       "«Ambos» = menciona comprender y ahorrar tiempo.", color=AQUA)
     st.caption("Lo que distingue a los grupos con menos estrés es **cómo** usan la IA (como guía para aprender), "
                "no cuántas horas la usan.")
 

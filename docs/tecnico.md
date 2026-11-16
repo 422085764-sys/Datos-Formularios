@@ -439,10 +439,10 @@ Lee los conjuntos procesados y seudonimizados de `data/processed/`: `integrado_1
 | Elemento | Contenido |
 |----------|-----------|
 | **Filtros** (una fila sobre las vistas) | Género musical, semestre, horas de música (control deslizante), nivel de estrés (IEP) y modalidad de uso de IA. Siempre se muestra el número de estudiantes en la selección |
-| **Resumen** | Tarjetas de los cinco KPI, cada una con su *n*, y los hallazgos principales con su advertencia metodológica |
-| **Hábitos musicales** | Género principal, momentos de escucha y distribución de horas diarias |
+| **Resumen** | Tarjetas de los cinco KPI, cada una con su *n*; una línea de clasificaciones destacadas de la selección (artista más mencionado, plataforma principal, característica que más influye y uso principal de la IA); hallazgos principales con su advertencia metodológica |
+| **Hábitos musicales** | Género principal, momentos de escucha y distribución de horas diarias. Sección *Preferencias musicales*: artistas más mencionados, plataformas, características de una canción que influyen en las emociones y géneros asociados a emociones |
 | **Música y bienestar** | Mejora de ánimo por género (KPI 3), nivel de estrés por perfil (KPI 4) y horas de música según el efecto en el ánimo |
-| **Uso de IA** | Uso como guía y horas de IA por nivel de estrés (KPI 5) y herramientas más usadas |
+| **Uso de IA** | Uso como guía y horas de IA por nivel de estrés (KPI 5). Sección *Cómo y para qué usan la IA*: herramientas, fase del estudio en que más la usan y motivo principal |
 | **Perfiles** | Perfiles de K-Means en el plano PCA, descripción de cada perfil y horas de música por perfil (KPI 2) |
 | **Notas metodológicas** | Fuentes, codificación, definición del IEP, protección de datos y alcance (no causalidad) |
 
@@ -452,11 +452,12 @@ Lee los conjuntos procesados y seudonimizados de `data/processed/`: `integrado_1
 - **Protección contra la reidentificación.** Si la selección tiene menos de 3 estudiantes, las vistas se ocultan con un aviso. Los grupos con menos de 3 estudiantes se omiten o se agrupan en "Otros". No se muestran identificadores ni respuestas textuales.
 - **Lectura honesta de las cifras.** Cada porcentaje aparece con su conteo ("83 % (n = 6)"). Los textos recuerdan que las señales son exploratorias y no causales.
 - **Accesibilidad y color.** Se usa la misma paleta apta para daltonismo que en las figuras estáticas. El color sigue a cada entidad: cada perfil conserva siempre su color, sin importar el filtro. Los niveles de estrés usan una rampa ordinal de un solo tono. Todos los valores tienen etiqueta directa, para no depender solo del color, y cada gráfica principal tiene una vista de tabla desplegable ("Ver datos de la gráfica").
+- **Clasificaciones de respuestas abiertas.** Los artistas (procesados con `src/texto.py`, NLTK) y las banderas multirrespuesta de la Fase 3 (plataformas, características, géneros por emoción, fases y motivo de uso de IA) se recalculan para la selección filtrada. Se muestran las opciones mencionadas por al menos **2 estudiantes** (`MIN_MENCIONES`), el mismo umbral del análisis de texto de la Fase 4. Son preferencias poco sensibles, pero aun así se omiten las menciones individuales. Las opciones restantes se pueden ver en la tabla de cada gráfica.
 - **Filtro de semestre.** Se conserva aunque hoy solo hay estudiantes de 7.º semestre, para cuando se agreguen datos de otros semestres; su ayuda contextual lo explica.
 
 ### 7.4 Verificación
 
-1. **Pruebas automatizadas con `streamlit.testing.v1.AppTest`.** Se ejecutaron 6 escenarios: sin filtros, estrés alto, género pop, uso de IA como guía, semestre 7 y un rango de horas con un solo estudiante. Ninguno produjo excepciones. Los KPI sin filtros coinciden con los de la Fase 4: 85 % de mejora (17 de 20), mediana de 4 h, 33 % usa la IA como guía. En el escenario de un estudiante, el tablero oculta todas las vistas, como exige la regla de anonimato.
+1. **Pruebas automatizadas con `streamlit.testing.v1.AppTest`.** Tras agregar las clasificaciones se repitieron cinco escenarios (sin filtros, estrés alto, pop, uso de IA como guía y un solo estudiante): ninguno produjo excepciones. Sin filtros, el tablero muestra 17 gráficas. Con estrés alto, la vista de artistas avisa que ninguno alcanza 2 menciones. La prueba original: Se ejecutaron 6 escenarios: sin filtros, estrés alto, género pop, uso de IA como guía, semestre 7 y un rango de horas con un solo estudiante. Ninguno produjo excepciones. Los KPI sin filtros coinciden con los de la Fase 4: 85 % de mejora (17 de 20), mediana de 4 h, 33 % usa la IA como guía. En el escenario de un estudiante, el tablero oculta todas las vistas, como exige la regla de anonimato.
 2. **Revisión visual en el navegador.** Se revisaron todas las pestañas con el servidor local, sin errores en la consola. Se corrigieron tres detalles durante la revisión: una etiqueta de valor recortada, el orden de la leyenda de niveles de estrés y la redacción de un aviso.
 
 ### 7.5 Criterio de aceptación de la fase

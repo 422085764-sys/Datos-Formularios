@@ -20,6 +20,7 @@ El proyecto cubre el ciclo completo:
 - **Usar la IA como guía para aprender** se asocia con menos estrés percibido (IEP mediano 1.0 frente a 2.5). Las horas de uso de IA no marcan diferencia.
 - **Los traslados más largos** se asocian con peor calidad de sueño (ρ = −0.51).
 - **Tres perfiles de estudiantes** (K-Means, silueta de 0.28): escucha intensiva, estrés alto, e IA como guía con estrés bajo.
+- **Preferencias:** Bad Bunny es el artista más mencionado (4 de 24), YouTube la plataforma más usada (13), el ritmo lo que más influye de una canción (19) y la investigación o resolución de dudas el uso principal de la IA (16).
 
 Los datos son observacionales y auto-reportados (n = 19 en el núcleo integrado, 24 en música + IA). Los resultados son **asociaciones exploratorias**: ninguna supera la corrección por comparaciones múltiples y no implican causalidad. Ver `docs/tecnico.pdf` y `docs/negocio.pdf`.
 
@@ -45,7 +46,7 @@ Los datos son observacionales y auto-reportados (n = 19 en el núcleo integrado,
 │   ├── modelado.py                 # agrupamiento, estabilidad y PCA
 │   ├── tablero.py                  # KPI del tablero
 │   └── momento_a.py, anexos.py, exportar_docs.py
-├── app/app.py            # tablero Streamlit + Plotly
+├── app/app.py            # tablero Streamlit + Plotly (KPI, perfiles y clasificaciones: artistas, plataformas, uso de IA)
 ├── docs/
 │   ├── tecnico.{md,docx,pdf}       # método y resultados
 │   ├── negocio.{md,docx,pdf}       # problemática, KPI y recomendaciones

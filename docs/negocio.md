@@ -18,6 +18,7 @@ lang: es-MX
 | 2026-11-15 | Fase 5: modelado | `notebooks/03_modelado.ipynb` (ejecutado sin errores); 3 perfiles por K-Means (silueta 0.28) contrastados con Ward, DBSCAN, bootstrap y sensibilidad; modelo supervisado descartado con justificación; `data/processed/perfiles.csv`; 4 figuras; sección 6 de `docs/tecnico.md` | Concluido |
 | 2026-11-15 | Fase 6: tablero analítico | `app/app.py` (Streamlit + Plotly) con los 5 KPI, filtros por género, semestre, horas, estrés y uso de IA, 6 vistas y umbral de anonimato de 3 estudiantes; `src/tablero.py`; probado con `AppTest` y en el navegador; sección 7 de `docs/tecnico.md` | Concluido |
 | 2026-11-15 | Fase 7: documentación y Git | Análisis de texto con NLTK y figura con seaborn; conclusiones, criterios de éxito y reproducibilidad (`docs/tecnico.md` §8 y §9); resultados y recomendaciones (sección 10); README final; re-ejecución completa del pipeline; documentos en `.md`, `.docx` y `.pdf`; repositorio con un commit por etapa | Concluido |
+| 2026-11-15 | Ajuste: clasificaciones en el tablero | Artistas (NLTK), plataformas, características de una canción, géneros por emoción, y fases y motivos de uso de IA en `app/app.py` y `src/tablero.py`; documentado en `docs/tecnico.md` §7 | Concluido |
 
 ## 1. Antecedentes: resultado del Momento A
 
@@ -157,6 +158,8 @@ La pregunta de investigación y las hipótesis operacionales H1 a H4 se mantiene
 3. **Música y bienestar.** Porcentaje de mejora de ánimo por género y por momento de escucha; índice de estrés por perfil de hábitos.
 4. **Uso de IA.** Horas de IA y modalidad de uso (guía, atajo o ambas) por perfil de bienestar.
 5. **Perfiles.** Resultado del agrupamiento de la Fase 5 en el plano de componentes principales.
+
+*Ampliación posterior:* el resumen, la vista de hábitos y la de IA incluyen **clasificaciones complementarias**: artistas más mencionados, plataformas, características de una canción que influyen en las emociones, géneros asociados a emociones, y fases y motivos de uso de la IA. Solo se muestran opciones mencionadas por al menos 2 estudiantes de la selección.
 6. **Notas metodológicas.** Tamaño muestral, carácter auto-reportado de los datos y advertencia de no causalidad.
 
 **Filtros:**

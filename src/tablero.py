@@ -120,3 +120,41 @@ def kpi5_ia_por_bienestar(d: pd.DataFrame) -> pd.DataFrame:
 
 def momentos(d: pd.DataFrame) -> pd.Series:
     return d[list(MOMENTOS)].sum().rename(index=MOMENTOS).sort_values()
+
+
+# ------------------------------------------------------------------------------------------
+# Clasificaciones complementarias (preguntas de opción libre codificadas en la Fase 3/4)
+# ------------------------------------------------------------------------------------------
+
+MIN_MENCIONES = 2  # un artista o término se muestra si lo mencionan al menos 2 estudiantes
+
+PLATAFORMAS = {"plat_youtube": "YouTube / YT Music", "plat_spotify": "Spotify", "plat_apple": "Apple Music",
+               "plat_otra": "Otras"}
+CARACTERISTICAS = {"car_ritmo": "Ritmo", "car_letra": "Letra", "car_volumen": "Volumen",
+                   "car_instrumental": "Instrumentación"}
+EMOCION = {"emo_pop": "Pop", "emo_rock_metal": "Rock / metal", "emo_urbano": "Urbano",
+           "emo_baladas": "Baladas / desamor", "emo_regional": "Regional mexicano",
+           "emo_electronica": "Electrónica", "emo_clasica": "Clásica / soundtracks"}
+FASES_IA = {"fase_investigacion": "Investigación / dudas", "fase_correccion": "Corrección",
+            "fase_redaccion": "Redacción", "fase_estructuracion": "Estructuración", "fase_repaso": "Repaso"}
+MOTIVOS_IA = {"tiempo": "Ahorrar tiempo / carga", "comprension": "Comprender temas", "ambos": "Ambos",
+              "otro": "Otro"}
+
+
+def conteo_banderas(d: pd.DataFrame, columnas: dict[str, str]) -> pd.Series:
+    """Estudiantes que mencionan cada opción de una pregunta multirrespuesta (n por opción)."""
+    cols = [c for c in columnas if c in d.columns]
+    return d[cols].sum().rename(index=columnas).astype(int).sort_values()
+
+
+def top_artistas(d: pd.DataFrame, minimo: int = MIN_MENCIONES) -> pd.Series:
+    """Artistas mencionados por al menos `minimo` estudiantes de la selección."""
+    from texto import artistas  # importación diferida: NLTK solo se carga si se usa la vista
+    s = artistas(d["m_artistas"], min_menciones=minimo)
+    s.index = [a.title() for a in s.index]
+    return s.sort_values()
+
+
+def motivos_ia(d: pd.DataFrame) -> pd.Series:
+    return d["ia_motivo_cod"].map(MOTIVOS_IA).value_counts().sort_values()
+
