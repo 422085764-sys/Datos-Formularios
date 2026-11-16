@@ -3,10 +3,12 @@
 Ejecutar desde la raíz del proyecto:
     streamlit run app/app.py
 
-Requiere los conjuntos de data/processed/ generados por los cuadernos 01 a 03.
+Datos: usa data/processed/ (generado por los cuadernos 01 a 03) o, si no existe, el secreto
+[datos] tablero_csv de Streamlit (ver src/preparar_despliegue.py y la sección de despliegue del README).
 """
 from __future__ import annotations
 
+import os
 import sys
 from pathlib import Path
 
@@ -90,15 +92,38 @@ def aviso_n(n: int, minimo: int = tb.MIN_N) -> bool:
 # ------------------------------------------------------------------------------------------
 
 @st.cache_data
-def datos() -> pd.DataFrame:
+def datos_locales() -> pd.DataFrame:
     return tb.cargar_base()
 
 
-try:
-    base = datos()
-except FileNotFoundError:
-    st.error("No se encontraron los datos procesados en `data/processed/`. Ejecuta los cuadernos "
-             "`01_limpieza`, `02_eda` y `03_modelado` (ver README) y vuelve a cargar la página.")
+@st.cache_data
+def datos_de_secreto(texto_csv: str) -> pd.DataFrame:
+    return tb.base_desde_csv(texto_csv)
+
+
+def secreto_csv() -> str | None:
+    """CSV mínimo guardado como secreto ([datos] tablero_csv); None si no está configurado."""
+    try:
+        return st.secrets["datos"]["tablero_csv"]
+    except (KeyError, FileNotFoundError, st.errors.StreamlitSecretNotFoundError):
+        return None
+
+
+# 1) Datos locales (data/processed/, generados por los cuadernos); 2) secreto de Streamlit
+#    (despliegue en Community Cloud, donde los datos no están en el repositorio).
+#    TABLERO_FUENTE=secretos fuerza la segunda opción (se usa en las pruebas).
+base = None
+if os.environ.get("TABLERO_FUENTE") != "secretos":
+    try:
+        base = datos_locales()
+    except FileNotFoundError:
+        base = None
+if base is None and (csv := secreto_csv()):
+    base = datos_de_secreto(csv)
+if base is None:
+    st.error("No se encontraron datos. **En local:** ejecuta los cuadernos `01_limpieza`, `02_eda` y "
+             "`03_modelado` (ver README). **En Streamlit Community Cloud:** pega el contenido generado por "
+             "`python src/preparar_despliegue.py` en *Settings → Secrets* de la app.")
     st.stop()
 
 st.title("Música, estado de ánimo, estrés e IA")

@@ -95,6 +95,37 @@ Regenerar el anexo del diccionario y los documentos en Word y PDF. El script usa
 .venv/Scripts/python src/exportar_docs.py docs/tecnico.md docs/negocio.md docs/momento_A.md
 ```
 
+## Publicar el tablero (Streamlit Community Cloud)
+
+El repositorio **no contiene datos**. Para que el tablero funcione en la nube, se le entrega un conjunto mínimo como *secreto* de Streamlit, que vive en la configuración de la app y no en GitHub. Ese conjunto tiene:
+
+- solo las 49 columnas que usa el tablero;
+- un número consecutivo en orden aleatorio en lugar del seudónimo;
+- ninguna respuesta abierta, salvo los nombres de artistas normalizados.
+
+1. Genera el secreto en tu equipo, después de ejecutar los cuadernos 01 a 03:
+
+   ```bash
+   .venv/Scripts/python src/preparar_despliegue.py
+   ```
+
+   Crea `.streamlit/secrets.toml`, que está excluido de Git.
+2. Entra a [share.streamlit.io](https://share.streamlit.io) con tu cuenta de GitHub y elige **Create app → Yup, I have an app**.
+3. Llena los campos: repositorio `Datos-Formularios`, rama `main` y archivo principal `app/app.py`. Si quieres, elige también un subdominio para la URL.
+4. En **Advanced settings**:
+   - elige la versión de Python más reciente disponible (el proyecto usa 3.14);
+   - en **Secrets**, pega **todo** el contenido de `.streamlit/secrets.toml`.
+5. Pulsa **Deploy**. Las dependencias se instalan desde `app/requirements.txt`, una versión ligera con solo lo que usa el tablero.
+
+**Quién puede verlo:**
+
+- **Repositorio público:** la app es pública; cualquiera con el enlace la ve.
+- **Repositorio privado:** la app es privada y solo la ven las personas que invites por correo (botón **Share** → *Invite viewers*). Community Cloud permite una sola app privada a la vez.
+
+En ambos casos el tablero solo muestra cifras agregadas y oculta cualquier selección con menos de 3 estudiantes.
+
+**Alternativa sin publicar nada** (por ejemplo, para presentarlo en clase): ejecuta `streamlit run app/app.py` y comparte la *Network URL* que muestra la terminal (`http://192.168.x.x:8501`). Solo funciona para personas conectadas a la misma red y mientras tu equipo tenga la app abierta.
+
 ## Herramientas
 
 pandas, numpy, scipy.stats, scikit-learn, matplotlib, seaborn, plotly, nltk, streamlit, nbformat/nbclient, pandoc (`pypandoc_binary`) y Git. Las versiones exactas están en `requirements.txt`. No se usaron ydata-profiling ni pandera, que eran opcionales: el perfilado y la validación de estructura se implementaron en `src/datos.py`.

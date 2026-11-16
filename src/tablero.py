@@ -41,6 +41,43 @@ def cargar_base() -> pd.DataFrame:
     return base
 
 
+# ------------------------------------------------------------------------------------------
+# Conjunto mínimo para desplegar el tablero sin el repositorio de datos
+# ------------------------------------------------------------------------------------------
+
+def columnas_tablero() -> list[str]:
+    """Columnas que la app realmente usa (nada de texto libre salvo artistas normalizados)."""
+    herramientas = ["ia_gemini", "ia_chatgpt", "ia_claude", "ia_deepseek", "ia_notebooklm", "ia_copilot", "ia_qwen"]
+    return (["id", "genero", "b_semestre_cod", "m_horas", "m_horas_nivel", "mejora_animo", "iep", "iep_nivel",
+             "ia_horas", "modalidad_ia", "ia_motivo_cod", "perfil", "CP1", "CP2", "m_artistas"]
+            + list(MOMENTOS) + list(PLATAFORMAS) + list(CARACTERISTICAS) + list(EMOCION) + list(FASES_IA)
+            + herramientas)
+
+
+def base_publicable(base: pd.DataFrame, semilla: int = 42) -> pd.DataFrame:
+    """Versión mínima de la base para el despliegue.
+
+    - Solo las columnas que usa la app.
+    - El seudónimo se sustituye por un número consecutivo en orden aleatorio (sin vínculo con
+      el seudónimo ni con el orden de respuesta).
+    - La lista libre de artistas se reduce a los nombres normalizados, separados por ';'.
+    """
+    from texto import artistas  # noqa: WPS433
+    d = base[columnas_tablero()].sample(frac=1, random_state=semilla).reset_index(drop=True)
+    d["id"] = range(1, len(d) + 1)
+    d["m_artistas"] = d["m_artistas"].map(
+        lambda x: "; ".join(artistas(pd.Series([x]), min_menciones=1).index) if pd.notna(x) else None)
+    return d
+
+
+def base_desde_csv(texto_csv: str) -> pd.DataFrame:
+    """Reconstruye la base del tablero a partir del CSV guardado como secreto de Streamlit."""
+    from io import StringIO
+    d = pd.read_csv(StringIO(texto_csv.strip()))
+    d["en_nucleo"] = d["iep"].notna() | d["b_semestre_cod"].notna()
+    return d
+
+
 def filtrar(base: pd.DataFrame, generos=None, semestres=None, horas=None, estres=None, modalidades=None):
     """Aplica los filtros. Los filtros del Doc 2 (semestre, estrés) excluyen a quien no lo respondió."""
     d = base
@@ -154,7 +191,8 @@ def top_artistas(d: pd.DataFrame, minimo: int = MIN_MENCIONES) -> pd.Series:
     from texto import artistas  # importación diferida: NLTK solo se carga si se usa la vista
     s = artistas(d["m_artistas"], min_menciones=minimo)
     s.index = [a.title() for a in s.index]
-    return s.sort_values()
+    # Desempate determinista (alfabético) para que el resultado no dependa del orden de las filas
+    return s.sort_index(ascending=False).sort_values(kind="stable")
 
 
 def motivos_ia(d: pd.DataFrame) -> pd.Series:

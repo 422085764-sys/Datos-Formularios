@@ -461,7 +461,19 @@ Lee los conjuntos procesados y seudonimizados de `data/processed/`: `integrado_1
    Más tarde, un usuario detectó que la vista de géneros fallaba cuando ningún género alcanzaba 3 estudiantes (por ejemplo, con estrés bajo: 4 estudiantes con 4 géneros distintos). La función devolvía una tabla vacía sin columnas. Se corrigió y se añadió una **prueba exhaustiva**: cada opción de cada filtro, todas las combinaciones de dos filtros y 5 rangos de horas, en total 63 escenarios. Ninguno produce excepciones, y 41 se ocultan correctamente por tener menos de 3 estudiantes.
 2. **Revisión visual en el navegador.** Se revisaron todas las pestañas con el servidor local, sin errores en la consola. Se corrigieron tres detalles durante la revisión: una etiqueta de valor recortada, el orden de la leyenda de niveles de estrés y la redacción de un aviso.
 
-### 7.5 Criterio de aceptación de la fase
+### 7.5 Despliegue
+
+El tablero puede publicarse en Streamlit Community Cloud sin subir datos al repositorio:
+
+- **Datos como secreto.** `src/preparar_despliegue.py` genera un conjunto mínimo con `tablero.base_publicable`: 24 filas y 49 columnas, el seudónimo sustituido por un número consecutivo en orden aleatorio y los artistas reducidos a nombres normalizados. Antes de escribirlo, verifica que no haya secuencias de 9 o 10 dígitos ni correos. El conjunto se guarda como secreto `[datos] tablero_csv` (7.5 KB).
+- **Orden de carga.** La app usa `data/processed/` si existe y, si no, el secreto. Si no hay ninguno, muestra instrucciones.
+- **Dependencias.** `app/requirements.txt` contiene solo las 5 dependencias del tablero (streamlit, pandas, numpy, plotly y nltk). Community Cloud lo usa porque está junto a `app.py`.
+- **Verificación.**
+  - El modo con secreto produce la misma salida que el local (métricas, textos, avisos y número de gráficas) en 19 escenarios de filtros.
+  - El desempate entre artistas con el mismo número de menciones se hizo alfabético, para que no dependa del orden de las filas.
+  - La app se probó en un entorno virtual limpio con solo `app/requirements.txt`, sin excepciones.
+
+### 7.6 Criterio de aceptación de la fase
 
 - [x] Audiencias definidas (estudiantes, tutores, coordinación) y los cinco KPI de la Fase 2 visibles con su *n*.
 - [x] Filtros por género musical, semestre, horas y estrés, más modalidad de uso de IA.

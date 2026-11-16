@@ -19,6 +19,7 @@ lang: es-MX
 | 2026-11-15 | Fase 6: tablero analítico | `app/app.py` (Streamlit + Plotly) con los 5 KPI, filtros por género, semestre, horas, estrés y uso de IA, 6 vistas y umbral de anonimato de 3 estudiantes; `src/tablero.py`; probado con `AppTest` y en el navegador; sección 7 de `docs/tecnico.md` | Concluido |
 | 2026-11-15 | Fase 7: documentación y Git | Análisis de texto con NLTK y figura con seaborn; conclusiones, criterios de éxito y reproducibilidad (`docs/tecnico.md` §8 y §9); resultados y recomendaciones (sección 10); README final; re-ejecución completa del pipeline; documentos en `.md`, `.docx` y `.pdf`; repositorio con un commit por etapa | Concluido |
 | 2026-11-15 | Ajuste: clasificaciones en el tablero | Artistas (NLTK), plataformas, características de una canción, géneros por emoción, y fases y motivos de uso de IA en `app/app.py` y `src/tablero.py`; documentado en `docs/tecnico.md` §7 | Concluido |
+| 2026-11-15 | Ajuste: publicación del tablero | Carga de datos desde un secreto de Streamlit (`src/preparar_despliegue.py`), `app/requirements.txt` ligero e instrucciones de despliegue en Streamlit Community Cloud (README y `docs/tecnico.md` §7.5); los datos siguen fuera del repositorio | Concluido |
 
 ## 1. Antecedentes: resultado del Momento A
 
