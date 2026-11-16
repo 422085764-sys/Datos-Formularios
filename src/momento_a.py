@@ -10,7 +10,8 @@ from pathlib import Path
 import pandas as pd
 
 RAIZ = Path(__file__).resolve().parents[1]
-RAW = RAIZ / "data" / "raw" if (RAIZ / "data" / "raw").exists() else RAIZ
+# Aceptados en data/raw, rechazados en data/excluded (Fase 1); antes, en la raíz
+CARPETAS = [RAIZ / "data" / "raw", RAIZ / "data" / "excluded", RAIZ]
 
 # Documento -> (archivo, columna llave o None si la llave se deriva del correo)
 DOCS = {
@@ -24,7 +25,7 @@ DOCS = {
 
 
 def leer(archivo: str) -> pd.DataFrame:
-    ruta = RAW / archivo
+    ruta = next(c / archivo for c in CARPETAS if (c / archivo).exists())
     return pd.read_csv(ruta) if ruta.suffix == ".csv" else pd.read_excel(ruta)
 
 

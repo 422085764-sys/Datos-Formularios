@@ -11,6 +11,7 @@ lang: es-MX
 | 2026-11-15 | Momento A: análisis y selección de documentos | `docs/momento_A.md`, `.docx` y `.pdf`; `notebooks/00_momento_A.ipynb`; `docs/matriz_relacion.csv`; `src/momento_a.py` | Concluido |
 | 2026-11-15 | Momento A, ajuste de formato | Redacción en tono académico; versión en notebook ejecutado sin errores; exportación a Word y PDF con `src/exportar_docs.py` | Concluido |
 | 2026-11-15 | Fase 0: definición del proyecto | Este documento (secciones 1 a 8), en `.md`, `.docx` y `.pdf` | Concluido |
+| 2026-11-15 | Fase 1: inventario y selección | `docs/tecnico.md`, `.docx` y `.pdf` (matriz, justificación, perfil y diccionario de variables); `notebooks/00_perfil_aceptados.ipynb`; `docs/diccionario_variables.csv`; estructura de carpetas, `requirements.txt`, `.gitignore`, `README.md`; repositorio Git con un commit por etapa | Concluido |
 | — | Fase 2: problemática, solución y KPI | Se agregará a este documento | Pendiente |
 
 ## 1. Antecedentes: resultado del Momento A
