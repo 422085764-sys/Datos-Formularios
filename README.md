@@ -108,4 +108,8 @@ pandas, numpy, scipy.stats, scikit-learn, matplotlib, seaborn, plotly, nltk, str
 ## Curso y autores
 
 - Curso: Sistemas Inteligentes — FES Acatlán, UNAM.
-- Autores: *por completar*.
+- Autores: 
+   -    Franco Mitzi Natalie Gabrielle
+   -    García Nazario Carlos Yahir
+   -    Hernández Sandoval Kevin Odin
+   -    Montoya Santiago Francisco
