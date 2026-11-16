@@ -91,8 +91,10 @@ def kpi3_generos(d: pd.DataFrame) -> pd.DataFrame:
         filas.append({"genero": g, "n": len(sub), "n_mejora": len(y),
                       "pct_mejora": y.mean() if len(y) >= MIN_N else None,
                       "n_iep": len(iep), "iep_medio": iep.mean() if len(iep) >= MIN_N else None})
-    t = pd.DataFrame(filas)
-    return t.sort_values("pct_mejora", ascending=False).reset_index(drop=True) if len(t) else t
+    # Las columnas se declaran siempre: si ningún género llega a MIN_N (p. ej., 4 estudiantes con
+    # 4 géneros distintos), la tabla vacía conserva su estructura y la app muestra el aviso.
+    t = pd.DataFrame(filas, columns=["genero", "n", "n_mejora", "pct_mejora", "n_iep", "iep_medio"])
+    return t.sort_values("pct_mejora", ascending=False).reset_index(drop=True)
 
 
 def kpi4_estres_por_perfil(d: pd.DataFrame) -> pd.DataFrame:
