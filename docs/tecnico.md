@@ -6,7 +6,7 @@ lang: es-MX
 
 ## 1. Introducción
 
-Este documento registra las decisiones metodológicas y los resultados técnicos del proyecto. La definición del problema, los objetivos, las hipótesis y los criterios de éxito están en el documento de negocio (`docs/negocio.md`). Este documento se complementa fase por fase. La versión actual cubre la **Fase 1: inventario y selección de fuentes**, que consolida el Momento A.
+Este documento registra las decisiones metodológicas y los resultados técnicos del proyecto. La definición del problema, los objetivos, las hipótesis y los criterios de éxito están en el documento de negocio (`docs/negocio.md`). Este documento se complementa fase por fase. La versión actual cubre la **Fase 1: inventario y selección de fuentes**, que consolida el Momento A, y la **Fase 3: limpieza individual**.
 
 ## 2. Entorno de trabajo y organización del proyecto
 
@@ -17,8 +17,8 @@ Este documento registra las decisiones metodológicas y los resultados técnicos
 | `data/raw/` | Los tres documentos aceptados, en su forma original. No se versiona. |
 | `data/excluded/` | Los tres documentos rechazados en el Momento A. Se conservan pero no se usan. No se versiona. |
 | `data/processed/` | Conjuntos limpios e integrados (Fases 3 y 4). No se versiona. |
-| `notebooks/` | `00_momento_A`, `00_perfil_aceptados`; después `01_limpieza`, `02_eda`, `03_modelado`. |
-| `src/` | Código reutilizable: `datos.py` (rutas, carga y perfilado), `diccionario.py` (diccionario de variables), `momento_a.py`, `exportar_docs.py`. |
+| `notebooks/` | `00_momento_A`, `00_perfil_aceptados`, `01_limpieza`; después `02_eda`, `03_modelado`. |
+| `src/` | Código reutilizable: `datos.py` (rutas, carga y perfilado), `diccionario.py` (diccionario de variables), `limpieza.py` y `codificacion.py` (limpieza y reglas de codificación), `anexos.py`, `momento_a.py`, `exportar_docs.py`. |
 | `app/` | Tablero en Streamlit (Fase 6). |
 | `docs/` | Documentos técnico y de negocio en `.md`, `.docx` y `.pdf`; matriz de relación y diccionario de variables en `.csv`. |
 
@@ -32,7 +32,7 @@ Los cuestionarios contienen números de cuenta y, en algunos casos, correos inst
 
 1. La carpeta `data/` está excluida de Git (`.gitignore`), así que ningún dato crudo o procesado se publica.
 2. Los cuadernos solo muestran conteos y estadísticos agregados. Antes de cada commit se verifica que no contengan secuencias de 9 o 10 dígitos.
-3. En la Fase 3, el número de cuenta se reemplazará por un identificador seudónimo antes de guardar los conjuntos procesados.
+3. Desde la Fase 3, el número de cuenta se reemplaza por un seudónimo (HMAC-SHA256 con clave secreta en `data/raw/`) antes de guardar los conjuntos procesados.
 
 ## 3. Fase 1 — Inventario y selección de fuentes
 
@@ -125,6 +125,91 @@ Cuatro variables de texto libre sin papel en las hipótesis no se codificarán: 
 - [x] Los tres documentos aceptados se leen y perfilan con `pandas` mediante funciones reutilizables (`src/datos.py`).
 - [x] Datos crudos organizados en `data/raw/` y protegidos de Git.
 - [x] Diccionario de variables con regla de codificación y uso para cada pregunta.
+
+## 4. Fase 3 — Limpieza individual
+
+### 4.1 Objetivo y principios
+
+El objetivo de esta fase es depurar por separado cada documento aceptado y convertir sus respuestas abiertas en variables analizables, sin integrarlos todavía. El procedimiento está en `notebooks/01_limpieza.ipynb`, y las reglas en `src/limpieza.py` (funciones generales) y `src/codificacion.py` (reglas por documento). Se siguieron cuatro principios:
+
+1. **Reglas explícitas.** Cada variable se codifica con una lista ordenada de expresiones regulares sobre texto normalizado. La primera regla que coincide asigna el valor, y las más específicas (negaciones, matices) van primero.
+2. **No inventar datos.** Si una respuesta no permite asignar un valor sin suponer información, se registra como faltante. No se imputa ningún valor.
+3. **Marcar en lugar de eliminar.** Los atípicos y las respuestas sospechosas se señalan con banderas, para que su exclusión sea una decisión explícita del análisis.
+4. **Validación exhaustiva.** Antes de fijar las reglas, se revisó cada respuesta junto a su código asignado. Esta revisión llevó a corregir tres reglas antes de la versión final: una errata en el nombre de la carrera, una negación interna en la pregunta de alimentación y una errata en "desayunar".
+
+### 4.2 Procedimiento común
+
+- **Normalización.** Descomposición Unicode NFKD, eliminación de diacríticos, minúsculas y unificación de espacios y saltos de línea (`unicodedata`, `re`).
+- **Estandarización de duraciones.** Los números escritos se convierten a dígitos ("una", "veinticuatro", "media"). Además: un rango se resume en su punto medio ("2-3 h" → 2.5); "x o más" se toma como x, su cota inferior; "menos de 1" vale 0.5; los minutos se convierten a fracción de hora.
+- **Escalas ordinales y Likert.** Las expresiones verbales se ubican en escalas de 0 a 4, 0 a 3, 0 a 2 o −1 a 1, según la variable. Las calificaciones x/10 se reescalan a la escala correspondiente.
+- **Llave y anonimato.** La cuenta de 10 dígitos del Documento 1 se corrigió porque, al borrar un dígito, coincidía de forma única con la cuenta sin pareja del Documento 3. Después, el número de cuenta se sustituyó por un seudónimo: HMAC-SHA256 con una clave secreta guardada fuera de Git, truncado a 12 caracteres. El seudónimo es el mismo en los tres documentos e irreversible sin la clave.
+
+### 4.3 Resultados por documento
+
+| Indicador | Doc 1. Música | Doc 2. Bienestar | Doc 3. IA |
+|-----------|-------------:|-----------------:|----------:|
+| Registros conservados | 24 de 24 | 19 de 19 | 24 de 24 |
+| Variables en el archivo limpio | 53 | 37 | 45 |
+| Variables derivadas (codificadas, banderas y calidad) | 35 | 20 | 27 |
+| Faltantes de origen | 1 | 0 | 2 |
+| Archivo | `doc1_musica_clean.csv` | `doc2_bienestar_clean.csv` | `doc3_ia_clean.csv` |
+
+No se eliminó ningún registro. La lista de variables derivadas, con sus válidos y faltantes, está en `docs/variables_codificadas.csv`.
+
+**Distribuciones de las variables clave:**
+
+| Variable | Válidos | Distribución |
+|----------|--------:|--------------|
+| `mejora_animo` (Doc 1) | 20 | Mejora: 17 · Sin cambio: 3 |
+| `m_horas` (Doc 1) | 24 | Mediana 4 h (Q1 2.4 · Q3 5.5); mín. 0, máx. 15 |
+| `m_horas_nivel` (Doc 1) | 24 | Baja: 5 · Media: 9 · Alta: 10 |
+| `m_genero_grupo` (Doc 1) | 24 | Rock/metal: 8 · Pop: 6 · Electrónica: 3 · Urbano: 3 · Regional: 2 · Variado: 1 · No escucha: 1 |
+| `m_concentracion_cod` (Doc 1) | 23 | Distrae: 7 · Depende: 5 · Ayuda: 11 |
+| `iep` (Doc 2) | 18 | Bajo: 4 · Medio: 9 · Alto: 5 |
+| `b_sueno_calidad_cod` (Doc 2) | 19 | Mala: 5 · Algo mala: 6 · Regular: 5 · Buena: 3 |
+| `ia_horas` (Doc 3) | 24 | Mediana 1.5 h (Q1 1 · Q3 2); mín. 0.08, máx. 8 |
+| `ia_guia_vs_atajo_cod` (Doc 3) | 23 | Guía: 8 · Ambas: 13 · Atajo: 2 |
+| `ia_estres_cod` (Doc 3) | 24 | Aumenta: 1 · Sin efecto: 3 · Disminuye: 20 |
+
+**Faltantes generados por la codificación.** Las respuestas que describen un estado sin comparar el antes y el después no se cuentan como mejora de ánimo: "bueno", "muy bueno" y "mejorable" (4 casos). Tampoco se codificaron:
+
+- una frecuencia de desánimo sin periodo ("5 veces"), por lo que ese estudiante no tiene IEP;
+- dos niveles de interés sin escala ("4" y "se sigue manteniendo estable");
+- una carrera no especificada ("UNAM");
+- algunas respuestas sobre la IA sin dirección clara (entre 1 y 5 por variable).
+
+### 4.4 Valores atípicos
+
+Se aplicó el criterio del rango intercuartílico (fuera de Q1 − 1.5·IQR o de Q3 + 1.5·IQR):
+
+| Variable | Límite superior | Valores atípicos |
+|----------|----------------:|------------------|
+| `m_horas` | 10.2 h | 15 h |
+| `b_traslado_min_cod` | 135 min | 360 min |
+| `ia_horas` | 3.5 h | 4, 6 y 8 h (la de 8 h incluye uso en el trabajo) |
+| `b_edad_cod` | 26 años | ninguno |
+
+Ningún atípico se eliminó. Son auto-reportes posibles, por ejemplo música de fondo durante toda la jornada o un traslado excepcionalmente largo. Los indicadores reportarán la mediana junto con la media.
+
+### 4.5 Respuestas copiadas
+
+Para cada estudiante se contaron las respuestas abiertas de al menos cinco palabras idénticas a la de otro estudiante. Un registro del Documento 3 tiene 4 coincidencias de este tipo y comparte seudónimo con un registro del Documento 1. Ese estudiante quedó marcado con `sospecha_copia = 1` y se conservó. No pertenece al núcleo de 19, así que solo afectará los análisis que usen los Documentos 1 y 3 sin el 2; para esos se reportará un análisis de sensibilidad.
+
+### 4.6 Implicaciones para las fases siguientes
+
+1. **El modelado supervisado no es viable con la etiqueta prevista.** `mejora_animo` tiene solo 3 casos negativos, menos que el mínimo de 4 fijado en `docs/negocio.md` §5. La Fase 5 se centrará en el agrupamiento no supervisado, y el KPI 1 deberá leerse junto con su *n*.
+2. **`ia_estres_cod` está muy concentrada** (20 de 24 casos en "disminuye"), así que tendrá poco poder para distinguir grupos. Para H4 tendrán más peso las horas de IA y la modalidad de uso.
+3. **La categoría "atajo" tiene 2 casos.** En los indicadores se agrupará con "ambas", conforme a la regla de mínimo 3 casos.
+4. **El semestre es constante (7 en los 19 casos)**, lo que confirma que el filtro por semestre del tablero solo tendrá valor si se agregan datos de otros semestres.
+
+### 4.7 Criterio de aceptación de la fase
+
+- [x] Diagnóstico de forma, tipos, faltantes y duplicados para cada documento.
+- [x] Texto normalizado (NFKD, `re`) y respuestas Likert y ordinales codificadas con reglas documentadas.
+- [x] Horas y minutos estandarizados con expresiones regulares y `apply`/`map`.
+- [x] Faltantes tratados con justificación y sin imputación; atípicos detectados y marcados.
+- [x] Conjuntos guardados en `data/processed/` con sufijo `_clean`, sin números de cuenta.
+- [x] Bitácora de decisiones en el cuaderno (sección 9).
 
 ## Anexo A. Diccionario de variables
 
