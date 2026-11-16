@@ -40,14 +40,16 @@ EDGE = [
 
 def a_docx(md: Path) -> Path:
     out = md.with_suffix(".docx")
-    pypandoc.convert_file(str(md), "docx", outputfile=str(out))
+    pypandoc.convert_file(str(md), "docx", outputfile=str(out),
+                          extra_args=[f"--resource-path={md.parent}"])  # figuras relativas a docs/
     return out
 
 
 def a_pdf(md: Path) -> Path:
     out = md.with_suffix(".pdf")
     if shutil.which("xelatex"):
-        pypandoc.convert_file(str(md), "pdf", outputfile=str(out), extra_args=["--pdf-engine=xelatex"])
+        pypandoc.convert_file(str(md), "pdf", outputfile=str(out),
+                              extra_args=["--pdf-engine=xelatex", f"--resource-path={md.parent}"])
         return out
     edge = next((p for p in EDGE if Path(p).exists()), None)
     if edge is None:
@@ -57,7 +59,8 @@ def a_pdf(md: Path) -> Path:
         css.write_text(CSS, encoding="utf-8")
         html = Path(tmp) / (md.stem + ".html")
         pypandoc.convert_file(str(md), "html5", outputfile=str(html),
-                              extra_args=["--standalone", "--embed-resources", f"--css={css}"])
+                              extra_args=["--standalone", "--embed-resources", f"--css={css}",
+                                          f"--resource-path={md.parent}"])
         out.unlink(missing_ok=True)
         subprocess.run([edge, "--headless=new", "--disable-gpu", "--no-pdf-header-footer",
                         f"--user-data-dir={Path(tmp) / 'perfil_edge'}",  # no se adjunta a un Edge abierto

@@ -6,7 +6,7 @@ lang: es-MX
 
 ## 1. Introducción
 
-Este documento registra las decisiones metodológicas y los resultados técnicos del proyecto. La definición del problema, los objetivos, las hipótesis y los criterios de éxito están en el documento de negocio (`docs/negocio.md`). Este documento se complementa fase por fase. La versión actual cubre la **Fase 1: inventario y selección de fuentes**, que consolida el Momento A, y la **Fase 3: limpieza individual**.
+Este documento registra las decisiones metodológicas y los resultados técnicos del proyecto. La definición del problema, los objetivos, las hipótesis y los criterios de éxito están en el documento de negocio (`docs/negocio.md`). Este documento se complementa fase por fase. La versión actual cubre la **Fase 1: inventario y selección de fuentes**, que consolida el Momento A; la **Fase 3: limpieza individual** y la **Fase 4: integración y análisis exploratorio**.
 
 ## 2. Entorno de trabajo y organización del proyecto
 
@@ -17,8 +17,8 @@ Este documento registra las decisiones metodológicas y los resultados técnicos
 | `data/raw/` | Los tres documentos aceptados, en su forma original. No se versiona. |
 | `data/excluded/` | Los tres documentos rechazados en el Momento A. Se conservan pero no se usan. No se versiona. |
 | `data/processed/` | Conjuntos limpios e integrados (Fases 3 y 4). No se versiona. |
-| `notebooks/` | `00_momento_A`, `00_perfil_aceptados`, `01_limpieza`; después `02_eda`, `03_modelado`. |
-| `src/` | Código reutilizable: `datos.py` (rutas, carga y perfilado), `diccionario.py` (diccionario de variables), `limpieza.py` y `codificacion.py` (limpieza y reglas de codificación), `anexos.py`, `momento_a.py`, `exportar_docs.py`. |
+| `notebooks/` | `00_momento_A`, `00_perfil_aceptados`, `01_limpieza`, `02_eda`; después `03_modelado`. |
+| `src/` | Código reutilizable: `datos.py` (rutas, carga y perfilado), `diccionario.py` (diccionario de variables), `limpieza.py` y `codificacion.py` (limpieza y reglas de codificación), `integracion.py`, `eda.py` y `graficos.py` (integración, pruebas y figuras), `anexos.py`, `momento_a.py`, `exportar_docs.py`. |
 | `app/` | Tablero en Streamlit (Fase 6). |
 | `docs/` | Documentos técnico y de negocio en `.md`, `.docx` y `.pdf`; matriz de relación y diccionario de variables en `.csv`. |
 
@@ -210,6 +210,106 @@ Para cada estudiante se contaron las respuestas abiertas de al menos cinco palab
 - [x] Faltantes tratados con justificación y sin imputación; atípicos detectados y marcados.
 - [x] Conjuntos guardados en `data/processed/` con sufijo `_clean`, sin números de cuenta.
 - [x] Bitácora de decisiones en el cuaderno (sección 9).
+
+## 5. Fase 4 — Integración y análisis exploratorio
+
+El procedimiento completo está en `notebooks/02_eda.ipynb`; las funciones, en `src/integracion.py`, `src/eda.py` y `src/graficos.py`. La tabla con todas las pruebas está en `docs/pruebas_hipotesis.csv`.
+
+### 5.1 Decisiones metodológicas
+
+- **Pruebas.** Se usaron pruebas no paramétricas o exactas, adecuadas para muestras de 16 a 24 casos y variables ordinales: Spearman, Mann-Whitney U, Kruskal-Wallis, Fisher exacta y ji-cuadrada (esta última solo descriptiva, por las celdas esperadas pequeñas).
+- **Tamaño de efecto.** Toda prueba reporta uno: ρ, correlación biserial de rangos r, razón de momios (OR) o ε².
+- **Comparaciones múltiples.** Se aplicó la corrección de Benjamini-Hochberg sobre las 23 pruebas de hipótesis. Un resultado con *p* < 0.05 y *q* ≥ 0.05 se reporta como **señal exploratoria**.
+- **Sensibilidad.** Las señales se repitieron sin valores atípicos y sin el registro marcado como posible copia.
+- **Interpretación.** Ningún resultado se interpreta de forma causal.
+
+### 5.2 Integración
+
+| Conjunto | Documentos | Registros | Pérdidas |
+|----------|-----------|----------:|----------|
+| Núcleo integrado (`integrado_123.csv`) | 1 + 2 + 3 | **19** | 5 del Doc 1 y 5 del Doc 3 (no respondieron el Doc 2) |
+| Música + IA (`integrado_13.csv`) | 1 + 3 | **24** | Ninguna, gracias a la corrección de la cuenta en la Fase 3 |
+
+La unión se hizo por seudónimo, con unión interna y validación uno a uno. Los 5 registros del Documento 1 que no entran al núcleo no difieren de los conservados en horas de escucha (*p* = 0.19) ni en mejora de ánimo (*p* = 1.0). No se detecta un sesgo de selección evidente, aunque la prueba tiene poca potencia.
+
+### 5.3 EDA individual
+
+![Horas diarias de música e IA (Documento 1 y Documento 3, n = 24)](figuras/f1_horas_musica_ia.png)
+
+![Momentos de escucha mencionados (Documento 1, n = 24)](figuras/f3_momentos.png)
+
+- **Hábitos musicales.** Los estudiantes escuchan música una mediana de **4 horas diarias** (rango de 0 a 15). El momento más frecuente es el **traslado** (75 %), seguido del estudio (42 %) y el ejercicio (38 %). Los géneros principales más comunes son rock/metal (8) y pop (6). La plataforma más usada es YouTube (13), seguida de Spotify (11).
+- **Bienestar** (núcleo, n = 19):
+  - el desánimo tiene mediana 3 en la escala de 0 a 4, y 7 de 18 lo reportan casi siempre;
+  - 11 de 19 califican su sueño como malo o algo malo;
+  - **14 de 18 tienen un IEP medio o alto**;
+  - el apoyo social es alto (mediana 3 de 3).
+- **IA** (n = 24):
+  - mediana de **1.5 horas diarias**;
+  - las herramientas más usadas son Gemini (15) y ChatGPT (11);
+  - 13 de 23 la usan como guía y como atajo, 8 solo como guía y 2 solo como atajo;
+  - 20 de 24 perciben que reduce su estrés.
+
+![Índice de estrés percibido por nivel (núcleo, n = 18)](figuras/f4_iep.png)
+
+### 5.4 Correlaciones
+
+![Matriz de correlaciones de Spearman en el núcleo integrado. El asterisco indica p < 0.05 sin corregir.](figuras/f5_spearman.png)
+
+Patrones principales:
+
+1. El IEP se asocia con la dificultad de concentración (ρ = 0.53), lo que respalda su coherencia como indicador indirecto.
+2. **A más minutos de traslado, peor calidad de sueño** (ρ = −0.51, *p* = 0.027). Esto da sustento empírico a un elemento de la problemática.
+3. Las horas de música se asocian con reportar mejora de ánimo (ρ = 0.57) y con percibir que la música ayuda a concentrarse (ρ = 0.43).
+4. Quienes tienen más apoyo social perciben con más fuerza que la IA reduce su estrés (ρ = 0.64, *p* = 0.003). Es un hallazgo no anticipado que conviene confirmar.
+5. **Ninguna variable de música se correlaciona con los indicadores generales de bienestar del Documento 2** (|ρ| ≤ 0.23).
+
+Con 105 pares evaluados, unos 5 resultados con *p* < 0.05 serían esperables solo por azar; por eso los patrones son orientativos.
+
+### 5.5 EDA comparado: evaluación de hipótesis
+
+| Hipótesis | Pruebas | *p* < 0.05 | *q* < 0.05 | Resultado principal |
+|-----------|--------:|-----------:|-----------:|---------------------|
+| H1. Mejora de ánimo y menor estrés | 5 | 0 | 0 | Quienes reportan mejora tienen un IEP ligeramente menor (mediana 2.0 frente a 2.5; r = −0.33; *p* = 0.41). Solo hay 3 casos sin mejora |
+| H2. Horas y momentos de escucha | 9 | 1 | 0 | Quienes reportan mejora escuchan más horas: 5 frente a 1.5 h; r = 0.88; *p* = 0.019; *q* = 0.35; se mantiene sin atípicos (*p* = 0.021). Los momentos de escucha no se asocian con la mejora |
+| H3. Géneros y bienestar | 4 | 0 | 0 | Sin diferencias de IEP ni de mejora entre géneros |
+| H4. Moderación por uso de IA | 5 | 1 | 0 | Quienes usan la IA **como guía** tienen un IEP menor: 1.0 frente a 2.5; r = −0.68; *p* = 0.031; *q* = 0.35; se mantiene sin atípicos (*p* = 0.037). Las horas de IA no se asocian con el IEP (ρ = −0.01) |
+
+![H2: horas de música según el efecto de la música en el ánimo (Documento 1, n = 20)](figuras/f7_h2_horas_mejora.png)
+
+![H4: estrés percibido según la modalidad de uso de IA (núcleo, n = 18)](figuras/f8_h4_iep_modalidad.png)
+
+**Moderación exploratoria.** Al dividir el núcleo por la mediana de horas de IA (1.5 h), la relación entre horas de música e IEP cambia de signo: ρ = +0.36 con poco uso de IA (n = 11) y ρ = −0.57 con mucho uso (n = 7). Ninguna de las dos es significativa, y la pendiente del primer grupo depende en buena parte de un estudiante con 15 horas de música. Es una pista descriptiva, no una prueba de interacción.
+
+![H4: horas de música e IEP por nivel de uso de IA (núcleo)](figuras/f9_h4_moderacion.png)
+
+**Análisis complementario (Documentos 1 y 3, n = 24).** No hay relación entre las horas de música y las de IA (ρ = 0.08), ni entre la modalidad de uso de IA y la mejora de ánimo (*p* = 0.52). Excluir el registro marcado como posible copia no cambia ningún resultado.
+
+### 5.6 Valores preliminares de los indicadores
+
+| KPI | Valor preliminar |
+|-----|------------------|
+| 1. % que reporta mejora de ánimo con música | **85 %** (17 de 20) |
+| 2. Horas de escucha por perfil | Baja: mediana 1.5 h (n = 5) · Media: 3 h (n = 9) · Alta: 7 h (n = 10) |
+| 3. Géneros con n ≥ 3 en el núcleo | Urbano: 100 % de mejora, IEP medio 2.2 (n = 3) · Pop: 83 %, 2.7 (n = 6) · Rock/metal: 67 %, 2.5 (n = 4) |
+| 4. IEP por perfil de horas | Baja: 2.1 · Media: 2.5 · Alta: 2.4 (mediana 2.5 en los tres; Kruskal-Wallis *p* = 0.87) |
+| 5. Uso de IA por nivel de IEP | Bajo: 75 % la usa como guía (n = 4) · Medio: 22 % (n = 9) · Alto: 0 % (n = 5); mediana de horas de IA de 1.25 a 1.5 h en los tres niveles |
+
+### 5.7 Hallazgos e implicaciones
+
+1. **El beneficio de la música se percibe, pero no se refleja en el bienestar general.** El 85 % atribuye a la música una mejora de ánimo, y ese beneficio crece con las horas de escucha. Sin embargo, los indicadores de bienestar del Documento 2 no varían con los hábitos musicales. La lectura más coherente es que el efecto percibido es **situacional e inmediato**, como acompañar un traslado o una tarea, y no un rasgo del estado de ánimo general.
+2. **La modalidad de uso de IA importa más que la cantidad.** Usar la IA como guía para aprender va con menos estrés percibido; las horas de uso no. Es la señal más robusta del estudio, aunque no supera la corrección por comparaciones múltiples.
+3. **Los traslados largos se asocian con peor sueño**, lo que respalda la problemática planteada.
+4. **Implicaciones para la Fase 5.** No hay base para un modelo supervisado: la etiqueta está desbalanceada (17 frente a 3) y no hay asociaciones robustas. El agrupamiento deberá combinar variables de hábitos musicales (horas, beneficios percibidos), de bienestar (IEP, sueño, concentración) y de IA (horas, modalidad) para explorar perfiles, validando su estabilidad con el coeficiente de silueta.
+
+**Limitaciones.** La muestra es pequeña (potencia suficiente solo para efectos grandes). Los datos son auto-reportados y transversales. La codificación del texto libre implica decisiones del equipo. El IEP no es un instrumento validado. La etiqueta de mejora tiene poca variabilidad.
+
+### 5.8 Criterio de aceptación de la fase
+
+- [x] Unión interna por seudónimo de los Documentos 1, 2 y 3, con registros conservados y perdidos reportados.
+- [x] EDA individual: univariado, bivariado y correlaciones (Spearman, ji-cuadrada y Fisher), con visualizaciones.
+- [x] EDA comparado: ánimo frente a estrés y sueño, y ánimo frente a uso de IA.
+- [x] Hallazgos documentados en este documento y cuaderno ejecutado sin errores.
 
 ## Anexo A. Diccionario de variables
 

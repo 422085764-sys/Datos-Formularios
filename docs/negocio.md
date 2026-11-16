@@ -14,6 +14,7 @@ lang: es-MX
 | 2026-11-15 | Fase 1: inventario y selección | `docs/tecnico.md`, `.docx` y `.pdf` (matriz, justificación, perfil y diccionario de variables); `notebooks/00_perfil_aceptados.ipynb`; `docs/diccionario_variables.csv`; estructura de carpetas, `requirements.txt`, `.gitignore`, `README.md`; repositorio Git con un commit por etapa | Concluido |
 | 2026-11-15 | Fase 2: problemática y solución propuesta | Sección 9 de este documento: árbol de problemas, diseño del tablero, cinco KPI con su cálculo, matriz KPI–hipótesis–audiencia y riesgos | Concluido |
 | 2026-11-15 | Fase 3: limpieza individual | `notebooks/01_limpieza.ipynb` (ejecutado sin errores, con bitácora de 15 decisiones); `src/limpieza.py` y `src/codificacion.py`; conjuntos `_clean` en `data/processed/` (seudonimizados, fuera de Git); `docs/variables_codificadas.csv`; sección 4 de `docs/tecnico.md` | Concluido |
+| 2026-11-15 | Fase 4: integración y EDA | `notebooks/02_eda.ipynb` (ejecutado sin errores); conjuntos integrados (n = 19 y n = 24) en `data/processed/`; 23 pruebas de hipótesis con corrección de Benjamini-Hochberg (`docs/pruebas_hipotesis.csv`); 9 figuras en `docs/figuras/`; KPI preliminares; sección 5 de `docs/tecnico.md` | Concluido |
 
 ## 1. Antecedentes: resultado del Momento A
 
