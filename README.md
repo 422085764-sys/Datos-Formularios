@@ -13,7 +13,7 @@ Los datos son observacionales y auto-reportados (n = 19 tras la integración): l
 | Momento A: selección de documentos | ✅ | `docs/momento_A.*`, `notebooks/00_momento_A.ipynb` |
 | Fase 0: definición del proyecto | ✅ | `docs/negocio.*` |
 | Fase 1: inventario y selección | ✅ | `docs/tecnico.*`, `notebooks/00_perfil_aceptados.ipynb`, `docs/diccionario_variables.csv` |
-| Fase 2: problemática, solución y KPI | ⏳ | `docs/negocio.md` |
+| Fase 2: problemática, solución y KPI | ✅ | `docs/negocio.md` |
 | Fase 3: limpieza | ⏳ | `notebooks/01_limpieza.ipynb` |
 | Fase 4: integración y EDA | ⏳ | `notebooks/02_eda.ipynb` |
 | Fase 5: modelado | ⏳ | `notebooks/03_modelado.ipynb` |
