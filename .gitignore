@@ -16,3 +16,6 @@ Thumbs.db
 
 # Streamlit
 .streamlit/secrets.toml
+
+# Configuración local de herramientas
+.claude/

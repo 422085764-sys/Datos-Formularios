@@ -6,7 +6,7 @@ lang: es-MX
 
 ## 1. Introducción
 
-Este documento registra las decisiones metodológicas y los resultados técnicos del proyecto. La definición del problema, los objetivos, las hipótesis y los criterios de éxito están en el documento de negocio (`docs/negocio.md`). Este documento se complementa fase por fase. La versión actual cubre la **Fase 1: inventario y selección de fuentes**, que consolida el Momento A; la **Fase 3: limpieza individual**; la **Fase 4: integración y análisis exploratorio**, y la **Fase 5: modelado**.
+Este documento registra las decisiones metodológicas y los resultados técnicos del proyecto. La definición del problema, los objetivos, las hipótesis y los criterios de éxito están en el documento de negocio (`docs/negocio.md`). Este documento se complementa fase por fase. La versión actual cubre la **Fase 1: inventario y selección de fuentes**, que consolida el Momento A; la **Fase 3: limpieza individual**; la **Fase 4: integración y análisis exploratorio**; la **Fase 5: modelado**, y la **Fase 6: tablero analítico**.
 
 ## 2. Entorno de trabajo y organización del proyecto
 
@@ -18,8 +18,8 @@ Este documento registra las decisiones metodológicas y los resultados técnicos
 | `data/excluded/` | Los tres documentos rechazados en el Momento A. Se conservan pero no se usan. No se versiona. |
 | `data/processed/` | Conjuntos limpios e integrados (Fases 3 y 4). No se versiona. |
 | `notebooks/` | `00_momento_A`, `00_perfil_aceptados`, `01_limpieza`, `02_eda`, `03_modelado`. |
-| `src/` | Código reutilizable: `datos.py` (rutas, carga y perfilado), `diccionario.py` (diccionario de variables), `limpieza.py` y `codificacion.py` (limpieza y reglas de codificación), `integracion.py`, `eda.py`, `graficos.py` y `modelado.py` (integración, pruebas, figuras y agrupamiento), `anexos.py`, `momento_a.py`, `exportar_docs.py`. |
-| `app/` | Tablero en Streamlit (Fase 6). |
+| `src/` | Código reutilizable: `datos.py` (rutas, carga y perfilado), `diccionario.py` (diccionario de variables), `limpieza.py` y `codificacion.py` (limpieza y reglas de codificación), `integracion.py`, `eda.py`, `graficos.py` y `modelado.py` (integración, pruebas, figuras y agrupamiento), `tablero.py` (indicadores del tablero), `anexos.py`, `momento_a.py`, `exportar_docs.py`. |
+| `app/` | Tablero en Streamlit (`app.py`, Fase 6). |
 | `docs/` | Documentos técnico y de negocio en `.md`, `.docx` y `.pdf`; matriz de relación y diccionario de variables en `.csv`. |
 
 ### 2.2 Reproducibilidad
@@ -399,6 +399,50 @@ Los perfiles difieren de forma apreciable en el tiempo de traslado y en la mejor
 - [x] Silueta reportada (0.28, ≥ 0.25 de referencia), junto con Davies-Bouldin, Calinski-Harabasz y estabilidad bootstrap.
 - [x] Modelo supervisado evaluado frente al criterio de la Fase 0 y la línea base; no viable, con justificación.
 - [x] Limitaciones documentadas; semilla 42.
+
+## 7. Fase 6 — Tablero analítico
+
+### 7.1 Descripción
+
+El tablero es una aplicación Streamlit (`app/app.py`) con gráficas interactivas de Plotly. Los cálculos de los indicadores están separados de la interfaz, en `src/tablero.py`, para poder probarlos sin abrir la aplicación. Se ejecuta desde la raíz del proyecto con:
+
+```
+streamlit run app/app.py
+```
+
+Lee los conjuntos procesados y seudonimizados de `data/processed/`: `integrado_13.csv`, `doc2_bienestar_clean.csv` y `perfiles.csv`. Si faltan, muestra un mensaje que indica qué cuadernos ejecutar. Está pensado para tres audiencias: estudiantes, tutores y coordinación de MAC (`docs/negocio.md` §9.3).
+
+### 7.2 Estructura
+
+| Elemento | Contenido |
+|----------|-----------|
+| **Filtros** (una fila sobre las vistas) | Género musical, semestre, horas de música (control deslizante), nivel de estrés (IEP) y modalidad de uso de IA. Siempre se muestra el número de estudiantes en la selección |
+| **Resumen** | Tarjetas de los cinco KPI, cada una con su *n*, y los hallazgos principales con su advertencia metodológica |
+| **Hábitos musicales** | Género principal, momentos de escucha y distribución de horas diarias |
+| **Música y bienestar** | Mejora de ánimo por género (KPI 3), nivel de estrés por perfil (KPI 4) y horas de música según el efecto en el ánimo |
+| **Uso de IA** | Uso como guía y horas de IA por nivel de estrés (KPI 5) y herramientas más usadas |
+| **Perfiles** | Perfiles de K-Means en el plano PCA, descripción de cada perfil y horas de música por perfil (KPI 2) |
+| **Notas metodológicas** | Fuentes, codificación, definición del IEP, protección de datos y alcance (no causalidad) |
+
+### 7.3 Decisiones de diseño
+
+- **Base de datos del tablero.** Se parte de los 24 estudiantes con los Documentos 1 y 3, y se añade el bienestar del Documento 2 cuando existe. Así, los KPI 1 y 2 usan todas las respuestas disponibles. Los filtros de semestre y de estrés incluyen solo a quienes respondieron el Documento 2, y el tablero lo advierte.
+- **Protección contra la reidentificación.** Si la selección tiene menos de 3 estudiantes, las vistas se ocultan con un aviso. Los grupos con menos de 3 estudiantes se omiten o se agrupan en "Otros". No se muestran identificadores ni respuestas textuales.
+- **Lectura honesta de las cifras.** Cada porcentaje aparece con su conteo ("83 % (n = 6)"). Los textos recuerdan que las señales son exploratorias y no causales.
+- **Accesibilidad y color.** Se usa la misma paleta apta para daltonismo que en las figuras estáticas. El color sigue a cada entidad: cada perfil conserva siempre su color, sin importar el filtro. Los niveles de estrés usan una rampa ordinal de un solo tono. Todos los valores tienen etiqueta directa, para no depender solo del color, y cada gráfica principal tiene una vista de tabla desplegable ("Ver datos de la gráfica").
+- **Filtro de semestre.** Se conserva aunque hoy solo hay estudiantes de 7.º semestre, para cuando se agreguen datos de otros semestres; su ayuda contextual lo explica.
+
+### 7.4 Verificación
+
+1. **Pruebas automatizadas con `streamlit.testing.v1.AppTest`.** Se ejecutaron 6 escenarios: sin filtros, estrés alto, género pop, uso de IA como guía, semestre 7 y un rango de horas con un solo estudiante. Ninguno produjo excepciones. Los KPI sin filtros coinciden con los de la Fase 4: 85 % de mejora (17 de 20), mediana de 4 h, 33 % usa la IA como guía. En el escenario de un estudiante, el tablero oculta todas las vistas, como exige la regla de anonimato.
+2. **Revisión visual en el navegador.** Se revisaron todas las pestañas con el servidor local, sin errores en la consola. Se corrigieron tres detalles durante la revisión: una etiqueta de valor recortada, el orden de la leyenda de niveles de estrés y la redacción de un aviso.
+
+### 7.5 Criterio de aceptación de la fase
+
+- [x] Audiencias definidas (estudiantes, tutores, coordinación) y los cinco KPI de la Fase 2 visibles con su *n*.
+- [x] Filtros por género musical, semestre, horas y estrés, más modalidad de uso de IA.
+- [x] Visualizaciones interactivas con Plotly dentro de Streamlit.
+- [x] Se ejecuta con `streamlit run app/app.py`; probado con `AppTest` y en el navegador.
 
 ## Anexo A. Diccionario de variables
 
