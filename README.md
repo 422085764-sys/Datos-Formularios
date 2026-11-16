@@ -69,7 +69,7 @@ py -m venv .venv
 .venv/Scripts/python -m pip install -r requirements.txt
 ```
 
-Los datos no forman parte del repositorio. Hay que colocar los tres cuestionarios aceptados en `data/raw/` y, para reproducir el Momento A, los tres rechazados en `data/excluded/`. La primera ejecución de la limpieza crea la clave del seudónimo en `data/raw/.clave_seudonimo`. Para obtener los mismos identificadores en otra máquina, hay que copiar esa clave.
+Los datos no forman parte del repositorio (ver [`data/README.md`](data/README.md) para los nombres exactos de los archivos). Hay que colocar los tres cuestionarios aceptados en `data/raw/` y, para reproducir el Momento A, los tres rechazados en `data/excluded/`. La primera ejecución de la limpieza crea la clave del seudónimo en `data/raw/.clave_seudonimo`. Para obtener los mismos identificadores en otra máquina, hay que copiar esa clave.
 
 ## Ejecución
 
