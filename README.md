@@ -56,223 +56,43 @@ Los datos son observacionales y auto-reportados (n = 19 en el núcleo integrado,
 └── README.md
 ```
 
-## Requisitos
+## Instalación
 
-| Herramienta | Para qué | Obligatoria |
-|-------------|----------|-------------|
-| **Python 3.14** | Ejecutar los cuadernos y el tablero. Las versiones de `requirements.txt` se probaron con Python 3.14.2; con versiones anteriores algunas podrían no instalarse | Sí |
-| **Git** | Descargar (clonar) el repositorio | Sí |
-| **Los 6 cuestionarios originales** | No están en el repositorio porque contienen números de cuenta. Se piden a los autores | Sí |
-| **Un navegador Edge, Chrome o Chromium**, o **LaTeX** (`xelatex`) | Generar los PDF de la documentación. Los `.docx` se generan sin nada adicional | Solo para los PDF |
-
-Los comandos de esta guía se ejecutan en una terminal: **PowerShell** en Windows, **Terminal** en macOS y la terminal de tu distribución en Linux.
-
-## Instalación paso a paso
-
-### Paso 1. Instalar Python 3.14 y Git
-
-**Windows**
-
-1. Instala Python 3.14 desde [python.org/downloads](https://www.python.org/downloads/). En el instalador marca **"Add python.exe to PATH"**. También puedes usar winget:
-
-   ```powershell
-   winget install Python.Python.3.14
-   ```
-
-2. Instala Git desde [git-scm.com](https://git-scm.com/download/win), o con winget:
-
-   ```powershell
-   winget install Git.Git
-   ```
-
-3. Cierra y vuelve a abrir PowerShell. Comprueba la instalación:
-
-   ```powershell
-   py -3.14 --version
-   ```
-
-   ```powershell
-   git --version
-   ```
-
-**macOS**
-
-1. Instala [Homebrew](https://brew.sh) si no lo tienes, y después Python y Git:
-
-   ```bash
-   brew install python@3.14 git
-   ```
-
-   También puedes usar el instalador de [python.org/downloads](https://www.python.org/downloads/).
-2. Comprueba la instalación:
-
-   ```bash
-   python3.14 --version
-   ```
-
-**Linux (Ubuntu / Debian)**
-
-1. Instala Git y las herramientas de entornos virtuales:
-
-   ```bash
-   sudo apt update && sudo apt install -y git python3-venv
-   ```
-
-2. Comprueba qué versión de Python trae tu distribución:
-
-   ```bash
-   python3 --version
-   ```
-
-   Si no es 3.14, instálala con [uv](https://docs.astral.sh/uv/), que funciona en cualquier distribución:
-
-   ```bash
-   curl -LsSf https://astral.sh/uv/install.sh | sh
-   ```
-
-   ```bash
-   uv python install 3.14
-   ```
-
-   En Fedora, usa `sudo dnf install git python3` en lugar de `apt`.
-
-### Paso 2. Descargar el repositorio
-
-Igual en los tres sistemas. Reemplaza `<URL-del-repositorio>` por la dirección del repositorio en GitHub (botón **Code**):
+Requiere Python 3.14. En Windows, el lanzador es `py`.
 
 ```bash
-git clone <URL-del-repositorio> Datos-Formularios
+py -m venv .venv
 ```
 
 ```bash
-cd Datos-Formularios
+.venv/Scripts/python -m pip install -r requirements.txt
 ```
 
-### Paso 3. Crear y activar el entorno virtual
-
-El entorno virtual (`.venv`) guarda las librerías del proyecto sin mezclarlas con las de tu sistema. **Hay que activarlo cada vez que abras una terminal nueva** para trabajar en el proyecto.
-
-| Sistema | Crear el entorno (una sola vez) | Activarlo (cada vez) |
-|---------|----------------------------------|----------------------|
-| Windows (PowerShell) | `py -3.14 -m venv .venv` | `.venv\Scripts\Activate.ps1` |
-| Windows (CMD) | `py -3.14 -m venv .venv` | `.venv\Scripts\activate.bat` |
-| macOS | `python3.14 -m venv .venv` | `source .venv/bin/activate` |
-| Linux | `python3.14 -m venv .venv` (con uv: `uv venv --python 3.14 .venv`) | `source .venv/bin/activate` |
-
-Cuando el entorno está activo, la terminal muestra `(.venv)` al inicio de la línea.
-
-> **Windows:** si PowerShell responde que "la ejecución de scripts está deshabilitada", permítela solo para esa ventana y vuelve a activar el entorno:
->
-> ```powershell
-> Set-ExecutionPolicy -Scope Process -ExecutionPolicy Bypass
-> ```
-
-### Paso 4. Instalar las librerías
-
-Con el entorno activo, el comando es igual en los tres sistemas:
-
-```bash
-python -m pip install --upgrade pip
-```
-
-```bash
-python -m pip install -r requirements.txt
-```
-
-Tarda unos minutos la primera vez. Para comprobar que quedó bien:
-
-```bash
-python -c "import pandas, sklearn, streamlit, nltk; print('Instalación correcta')"
-```
-
-### Paso 5. Colocar los datos
-
-Los cuestionarios no se descargan con el repositorio. Copia los archivos originales con sus **nombres exactos** (la lista completa está en [`data/README.md`](data/README.md)):
-
-- `data/raw/`: los 3 cuestionarios que usa el estudio (música, bienestar e IA).
-- `data/excluded/`: los 3 cuestionarios descartados (Test, Pelis y series, Relación amor–carrera). Solo se necesitan para el cuaderno `00_analisis_documentos`.
-
-La primera vez que se ejecuta la limpieza se crea la clave del seudónimo en `data/raw/.clave_seudonimo`. Si quieres obtener **exactamente** los mismos identificadores que otra persona, copia también su clave antes de ejecutar los cuadernos. Nunca la subas a Git.
-
-### Paso 6 (opcional). Herramienta para los PDF
-
-Solo hace falta si vas a regenerar la documentación en PDF:
-
-- **Windows:** no hay que instalar nada; se usa Microsoft Edge, que ya viene con el sistema.
-- **macOS:** instala Google Chrome o Microsoft Edge (por ejemplo, `brew install --cask google-chrome`), o LaTeX con [MacTeX](https://www.tug.org/mactex/).
-- **Linux:** instala Chromium (`sudo apt install -y chromium`, o `chromium-browser` en algunas versiones de Ubuntu) o LaTeX (`sudo apt install -y texlive-xetex`).
-
-El script usa `xelatex` si lo encuentra; si no, imprime el documento con el primer navegador que encuentre.
+Los datos no forman parte del repositorio (ver [`data/README.md`](data/README.md) para los nombres exactos de los archivos). Hay que colocar los tres cuestionarios aceptados en `data/raw/` y, para reproducir el Momento A, los tres rechazados en `data/excluded/`. La primera ejecución de la limpieza crea la clave del seudónimo en `data/raw/.clave_seudonimo`. Para obtener los mismos identificadores en otra máquina, hay que copiar esa clave.
 
 ## Ejecución
 
-Todos los comandos se ejecutan desde la carpeta del proyecto y **con el entorno virtual activo**.
-
-### 1. Ejecutar los cuadernos (en orden)
-
-El cuaderno 01 genera los datos limpios que usan el 02 y el 03, así que el orden importa.
-
-**macOS y Linux:**
+Los cuadernos se ejecutan en orden desde `notebooks/`. En Windows hace falta `PYTHONUTF8=1`: sin esa variable, `jupyter-execute` lee el `.ipynb` con la codificación del sistema y corrompe los acentos del código.
 
 ```bash
-cd notebooks && jupyter-execute --inplace 00_analisis_documentos.ipynb 00_perfil_aceptados.ipynb 01_limpieza.ipynb 02_eda.ipynb 03_modelado.ipynb && cd ..
+cd notebooks && PYTHONUTF8=1 ../.venv/Scripts/jupyter-execute --inplace 00_analisis_documentos.ipynb 00_perfil_aceptados.ipynb 01_limpieza.ipynb 02_eda.ipynb 03_modelado.ipynb
 ```
 
-**Windows (PowerShell).** Primero activa el modo UTF-8 de Python en esa ventana. Sin él, `jupyter-execute` lee los acentos del código con la codificación de Windows y falla:
-
-```powershell
-$env:PYTHONUTF8 = "1"
-```
-
-```powershell
-cd notebooks; jupyter-execute --inplace 00_analisis_documentos.ipynb 00_perfil_aceptados.ipynb 01_limpieza.ipynb 02_eda.ipynb 03_modelado.ipynb; cd ..
-```
-
-En CMD, el equivalente es `set PYTHONUTF8=1`.
-
-También se pueden abrir y ejecutar uno por uno en VS Code o en Jupyter, eligiendo el kernel del entorno `.venv`.
-
-**Qué deberías obtener:**
-
-- `data/processed/` con 6 archivos `.csv`: `doc1_musica_clean`, `doc2_bienestar_clean`, `doc3_ia_clean`, `integrado_123`, `integrado_13` y `perfiles`.
-- Las figuras en `docs/figuras/`.
-- Los cuadernos con sus resultados y sin errores.
-
-### 2. Abrir el tablero
+Tablero interactivo (requiere haber ejecutado los cuadernos 01 a 03):
 
 ```bash
-streamlit run app/app.py
+.venv/Scripts/streamlit run app/app.py
 ```
 
-Se abre en el navegador, en `http://localhost:8501`. Para detenerlo, presiona `Ctrl + C` en la terminal. Si el puerto está ocupado, usa otro:
+Regenerar el anexo del diccionario y los documentos en Word y PDF. El script usa el pandoc incluido en `pypandoc_binary`; genera el PDF con `xelatex` si está instalado y, si no, con Microsoft Edge en modo *headless*.
 
 ```bash
-streamlit run app/app.py --server.port 8502
-```
-
-### 3. Regenerar la documentación (Word y PDF)
-
-```bash
-python src/anexos.py
+.venv/Scripts/python src/anexos.py
 ```
 
 ```bash
-python src/exportar_docs.py docs/tecnico.md docs/negocio.md
+.venv/Scripts/python src/exportar_docs.py docs/tecnico.md docs/negocio.md
 ```
-
-Los documentos quedan en `docs/` y **no se suben a Git**; solo se versionan las figuras.
-
-### Problemas frecuentes
-
-| Problema | Causa | Solución |
-|----------|-------|----------|
-| `jupyter-execute`, `streamlit` o `python` "no se reconoce" | El entorno virtual no está activo | Actívalo (Paso 3) |
-| En Windows, error de codificación o acentos raros al ejecutar los cuadernos | Falta el modo UTF-8 | Ejecuta `$env:PYTHONUTF8 = "1"` en esa ventana |
-| `FileNotFoundError` en el cuaderno 00 o 01 | Faltan cuestionarios o tienen otro nombre | Revisa los nombres en `data/README.md` |
-| El tablero dice que no encontró los datos | No se ejecutaron los cuadernos 01 a 03 | Ejecútalos en orden (Ejecución, punto 1) |
-| `permission denied` al regenerar un `.docx` | El archivo está abierto en Word | Ciérralo y vuelve a intentarlo |
-| "Para el PDF se necesita xelatex o un navegador…" | No hay navegador Chromium ni LaTeX | Instala uno (Paso 6); el `.docx` sí se generó |
-| Error al instalar una librería | Versión de Python distinta de 3.14 | Crea el entorno con Python 3.14 |
 
 ## Publicar el tablero (Streamlit Community Cloud)
 
@@ -282,10 +102,10 @@ El repositorio **no contiene datos**. Para que el tablero funcione en la nube, s
 - un número consecutivo en orden aleatorio en lugar del seudónimo;
 - ninguna respuesta abierta, salvo los nombres de artistas normalizados.
 
-1. Genera el secreto en tu equipo (con el entorno virtual activo), después de ejecutar los cuadernos 01 a 03:
+1. Genera el secreto en tu equipo, después de ejecutar los cuadernos 01 a 03:
 
    ```bash
-   python src/preparar_despliegue.py
+   .venv/Scripts/python src/preparar_despliegue.py
    ```
 
    Crea `.streamlit/secrets.toml`, que está excluido de Git.
@@ -308,6 +128,20 @@ En ambos casos el tablero solo muestra cifras agregadas y oculta cualquier selec
 ## Herramientas
 
 pandas, numpy, scipy.stats, scikit-learn, matplotlib, seaborn, plotly, nltk, streamlit, nbformat/nbclient, pandoc (`pypandoc_binary`) y Git. Las versiones exactas están en `requirements.txt`. No se usaron ydata-profiling ni pandera, que eran opcionales: el perfilado y la validación de estructura se implementaron en `src/datos.py`.
+
+## Antes de subir cambios a GitHub
+
+Revisa qué se subiría y si hay datos personales. El script lista los commits pendientes, los archivos nuevos o modificados y lo que protege el `.gitignore`. Termina con error si encuentra datos, secretos, números de cuenta o correos:
+
+```bash
+.venv/Scripts/python scripts/revisar_antes_de_subir.py --historial
+```
+
+`scripts/reescribir_historial.sh` limpia el historial de commits. Quita las líneas `Co-Authored-By` y, opcionalmente, cambia el correo de autor por tu correo *noreply* de GitHub (Settings → Emails). Primero crea un respaldo y no sube nada; al final indica el `git push --force-with-lease` que debes ejecutar:
+
+```bash
+bash scripts/reescribir_historial.sh --simular --email TU_ID+usuario@users.noreply.github.com
+```
 
 ## Privacidad
 
