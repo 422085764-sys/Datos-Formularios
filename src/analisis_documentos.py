@@ -1,4 +1,4 @@
-"""Análisis de los 6 documentos disponibles (Momento A): de qué tratan, quién los respondió,
+"""Análisis de los 6 documentos disponibles: de qué tratan, quién los respondió,
 qué temas comparten y qué señales muestran. Sirve para justificar el tema y la pregunta del
 proyecto y, después, para elegir qué documentos se usan.
 

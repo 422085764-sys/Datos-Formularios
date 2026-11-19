@@ -30,9 +30,7 @@ PERFIL_COLOR = {"P1 · Escucha intensiva": AZUL, "P2 · Estrés alto": NARANJA,
 st.set_page_config(page_title="Música, ánimo e IA · MAC", page_icon="🎧", layout="wide")
 
 
-# ------------------------------------------------------------------------------------------
 # Utilidades de gráficas (Plotly)
-# ------------------------------------------------------------------------------------------
 
 def estilo(fig: go.Figure, titulo: str, alto: int = 340, xaxis: str = "", yaxis: str = "") -> go.Figure:
     fig.update_layout(title=dict(text=titulo, x=0, xanchor="left", font=dict(size=15)), height=alto,
@@ -87,9 +85,9 @@ def aviso_n(n: int, minimo: int = tb.MIN_N) -> bool:
     return True
 
 
-# ------------------------------------------------------------------------------------------
+
 # Datos
-# ------------------------------------------------------------------------------------------
+
 
 @st.cache_data
 def datos_locales() -> pd.DataFrame:
@@ -130,9 +128,9 @@ st.title("Música, estado de ánimo, estrés e IA")
 st.caption("Estudiantes de 7.º semestre de Matemáticas Aplicadas y Computación, FES Acatlán · "
            "Datos auto-reportados y observacionales: las relaciones mostradas son asociaciones, no causas.")
 
-# ------------------------------------------------------------------------------------------
+
 # Filtros (una fila sobre las vistas)
-# ------------------------------------------------------------------------------------------
+
 
 f1, f2, f3, f4, f5 = st.columns([1.3, 0.8, 1.3, 1.1, 1.3])
 generos = f1.multiselect("Género musical", sorted(base["genero"].dropna().unique()), placeholder="Todos")
@@ -159,9 +157,9 @@ if not aviso_n(len(d)):
 tabs = st.tabs(["Resumen", "Hábitos musicales", "Música y bienestar", "Uso de IA", "Perfiles",
                 "Notas metodológicas"])
 
-# ------------------------------------------------------------------------------------------
+
 # Resumen
-# ------------------------------------------------------------------------------------------
+
 with tabs[0]:
     k1 = tb.kpi1_mejora(d)
     k2 = d["m_horas"].dropna()
@@ -224,9 +222,9 @@ with tabs[0]:
         "Son señales exploratorias con muestras pequeñas (n = 17 a 24); ninguna se confirma tras corregir por "
         "comparaciones múltiples. Ver *Notas metodológicas*.")
 
-# ------------------------------------------------------------------------------------------
+
 # Hábitos musicales
-# ------------------------------------------------------------------------------------------
+
 with tabs[1]:
     a, b = st.columns(2)
     with a:
@@ -277,9 +275,9 @@ with tabs[1]:
                        "Estudiantes que lo mencionan", len(d),
                        "Pregunta: «¿Qué géneros te hacen sentir feliz, tranquilo, triste o motivado?»")
 
-# ------------------------------------------------------------------------------------------
+
 # Música y bienestar
-# ------------------------------------------------------------------------------------------
+
 with tabs[2]:
     a, b = st.columns(2)
     with a:
@@ -323,9 +321,9 @@ with tabs[2]:
         st.caption("Quienes reportan mejora escuchan más horas (señal exploratoria; uno de los casos sin cambio no "
                    "escucha música).")
 
-# ------------------------------------------------------------------------------------------
+
 # Uso de IA
-# ------------------------------------------------------------------------------------------
+
 with tabs[3]:
     a, b = st.columns(2)
     k5 = tb.kpi5_ia_por_bienestar(d)
@@ -361,9 +359,8 @@ with tabs[3]:
     st.caption("Lo que distingue a los grupos con menos estrés es **cómo** usan la IA (como guía para aprender), "
                "no cuántas horas la usan.")
 
-# ------------------------------------------------------------------------------------------
 # Perfiles
-# ------------------------------------------------------------------------------------------
+
 with tabs[4]:
     sub = d.dropna(subset=["perfil"])
     st.markdown("Perfiles obtenidos por **K-Means** (k = 3) con horas de música, beneficios percibidos de la música, "
@@ -401,9 +398,8 @@ with tabs[4]:
                             width="stretch")
             tabla_accesible(k2p, "Ver horas por perfil")
 
-# ------------------------------------------------------------------------------------------
 # Notas metodológicas
-# ------------------------------------------------------------------------------------------
+
 with tabs[5]:
     st.markdown(f"""
 **Fuentes.** Tres cuestionarios (música y ánimo, n = 24; bienestar, n = 19; uso de IA, n = 24) unidos por un
