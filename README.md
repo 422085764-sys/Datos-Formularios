@@ -48,6 +48,8 @@ Los datos son observacionales y auto-reportados (n = 19 en el núcleo integrado,
 │   └── analisis_documentos.py, anexos.py, exportar_docs.py
 ├── app/app.py            # tablero Streamlit + Plotly (KPI, perfiles y clasificaciones: artistas, plataformas, uso de IA)
 ├── docs/                 # se genera localmente; en Git solo se versionan las figuras
+│   ├── tecnico.{md,docx,pdf}       # método y resultados
+│   ├── negocio.{md,docx,pdf}       # Momento A, problemática, KPI y recomendaciones
 │   ├── figuras/                    # figuras del documento técnico (sí se versionan)
 │   └── *.csv                       # matriz, diccionario, variables y pruebas
 ├── requirements.txt
