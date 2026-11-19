@@ -1,0 +1,24 @@
+﻿hipótesis,prueba,x,y,n,detalle,estadístico,p,q_BH,efecto,medida_efecto
+H1,Mann-Whitney,mejora_animo,b_desanimo_cod,16,n=3/13; mediana 4.00 vs 3.00,15.0,0.573,0.8237,-0.231,r_rb
+H1,Mann-Whitney,mejora_animo,b_irritabilidad_cod,17,n=3/14; mediana 2.00 vs 1.00,16.0,0.5188,0.7955,-0.238,r_rb
+H1,Mann-Whitney,mejora_animo,iep,16,n=3/13; mediana 2.50 vs 2.00,13.0,0.4119,0.7955,-0.333,r_rb
+H1,Mann-Whitney,mejora_animo,b_sueno_calidad_cod,17,n=3/14; mediana 2.00 vs 1.00,15.0,0.4698,0.7955,-0.286,r_rb
+H1,Mann-Whitney,m_maneja_emociones_cod,iep,17,n=2/15; mediana 1.75 vs 2.50,20.0,0.4948,0.7955,0.333,r_rb
+H2 (Doc 1),Mann-Whitney,mejora_animo,m_horas,20,n=3/17; mediana 1.50 vs 5.00,48.0,0.0192,0.352,0.882,r_rb
+H2,Spearman,m_horas,iep,18,,0.05,0.844,0.9244,0.05,rho
+H2,Spearman,m_horas,b_sueno_calidad_cod,19,,-0.185,0.4476,0.7955,-0.185,rho
+H2,Spearman,m_horas,b_concentracion_dif_cod,19,,0.205,0.3996,0.7955,0.205,rho
+H2,Spearman,m_horas,m_concentracion_cod,18,,0.434,0.0716,0.5492,0.434,rho
+H2,Spearman,m_horas,m_energia_cod,19,,0.368,0.1216,0.6993,0.368,rho
+H2,Fisher exacta,mom_estudio,mejora_animo,17,"tabla [[2, 9], [1, 5]]",,1.0,1.0,0.965,OR
+H2,Fisher exacta,mom_traslado,mejora_animo,17,"tabla [[1, 2], [2, 12]]",,0.4647,0.7955,3.0,OR
+H2,Fisher exacta,mom_ejercicio,mejora_animo,17,"tabla [[3, 8], [0, 6]]",,0.5147,0.7955,5.353,OR
+H3,Kruskal-Wallis,m_genero_grupo,iep,13,3 grupos con n≥3,0.484,0.7849,0.9027,0.04,ε²
+H3,Ji-cuadrada,genero3,mejora_animo,17,83% celdas esperadas < 5,0.658,0.7197,0.9027,0.197,V de Cramér
+H3,Mann-Whitney,emo_pop,iep,18,n=8/10; mediana 2.50 vs 2.50,53.5,0.2386,0.7955,0.337,r_rb
+H3,Mann-Whitney,emo_rock_metal,iep,18,n=12/6; mediana 2.25 vs 2.50,39.5,0.7744,0.9027,0.097,r_rb
+H4,Spearman,ia_horas,iep,18,,-0.008,0.9747,1.0,-0.008,rho
+H4,Mann-Whitney,guia,iep,18,n=13/5; mediana 2.50 vs 1.00,10.5,0.0306,0.352,-0.677,r_rb
+H4,Spearman,ia_estres_cod,iep,18,,-0.243,0.3311,0.7955,-0.243,rho
+H4,Spearman,ia_independencia_cod,iep,16,,0.126,0.6418,0.8683,0.126,rho
+H4,Fisher exacta,guia,mejora_animo,17,"tabla [[3, 9], [0, 5]]",,0.5147,0.7955,4.053,OR

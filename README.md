@@ -48,8 +48,6 @@ Los datos son observacionales y auto-reportados (n = 19 en el núcleo integrado,
 │   └── analisis_documentos.py, anexos.py, exportar_docs.py
 ├── app/app.py            # tablero Streamlit + Plotly (KPI, perfiles y clasificaciones: artistas, plataformas, uso de IA)
 ├── docs/                 # se genera localmente; en Git solo se versionan las figuras
-│   ├── tecnico.{md,docx,pdf}       # método y resultados
-│   ├── negocio.{md,docx,pdf}       # Momento A, problemática, KPI y recomendaciones
 │   ├── figuras/                    # figuras del documento técnico (sí se versionan)
 │   └── *.csv                       # matriz, diccionario, variables y pruebas
 ├── requirements.txt
@@ -84,15 +82,6 @@ Tablero interactivo (requiere haber ejecutado los cuadernos 01 a 03):
 .venv/Scripts/streamlit run app/app.py
 ```
 
-Regenerar el anexo del diccionario y los documentos en Word y PDF. El script usa el pandoc incluido en `pypandoc_binary`; genera el PDF con `xelatex` si está instalado y, si no, con Microsoft Edge en modo *headless*.
-
-```bash
-.venv/Scripts/python src/anexos.py
-```
-
-```bash
-.venv/Scripts/python src/exportar_docs.py docs/tecnico.md docs/negocio.md
-```
 
 ## Publicar el tablero (Streamlit Community Cloud)
 
