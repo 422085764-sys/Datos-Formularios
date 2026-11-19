@@ -33,7 +33,6 @@
 1,emo_clasica,float64,24,0,2
 1,m_horas_atipico,Int64,24,0,2
 1,copias_d1,int64,24,0,3
-1,sospecha_copia,int64,24,0,2
 2,b_semestre_cod,float64,19,0,1
 2,b_edad_cod,float64,19,0,5
 2,b_traslado_min_cod,float64,19,0,10
@@ -80,4 +79,3 @@
 3,ia_n_herramientas,float64,24,0,4
 3,ia_horas_atipico,Int64,24,0,2
 3,copias_d3,int64,24,0,4
-3,sospecha_copia,int64,24,0,2
