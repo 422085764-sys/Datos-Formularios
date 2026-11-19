@@ -1,7 +1,7 @@
 """Exporta documentos Markdown de docs/ a .docx y .pdf.
 
 Uso (desde la raíz del proyecto):
-    python src/exportar_docs.py docs/momento_A.md [docs/otro.md ...]
+    python src/exportar_docs.py docs/negocio.md [docs/tecnico.md ...]
 
 - .docx: pandoc (incluido en el paquete `pypandoc_binary`, no requiere instalación).
 - .pdf : si hay xelatex en el PATH se usa `--pdf-engine=xelatex`; si no, se genera

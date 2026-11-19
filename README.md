@@ -22,7 +22,7 @@ El proyecto cubre el ciclo completo:
 - **Tres perfiles de estudiantes** (K-Means, silueta de 0.28): escucha intensiva, estrés alto, e IA como guía con estrés bajo.
 - **Preferencias:** Bad Bunny es el artista más mencionado (4 de 24), YouTube la plataforma más usada (13), el ritmo lo que más influye de una canción (19) y la investigación o resolución de dudas el uso principal de la IA (16).
 
-Los datos son observacionales y auto-reportados (n = 19 en el núcleo integrado, 24 en música + IA). Los resultados son **asociaciones exploratorias**: ninguna supera la corrección por comparaciones múltiples y no implican causalidad. Ver `docs/tecnico.pdf` y `docs/negocio.pdf`.
+Los datos son observacionales y auto-reportados (n = 19 en el núcleo integrado, 24 en música + IA). Los resultados son **asociaciones exploratorias**: ninguna supera la corrección por comparaciones múltiples y no implican causalidad. Ver `docs/tecnico.pdf` y `docs/negocio.pdf`, que se generan localmente y no se suben a Git.
 
 ## Estructura
 
@@ -32,7 +32,7 @@ Los datos son observacionales y auto-reportados (n = 19 en el núcleo integrado,
 │   ├── processed/        # datos limpios, integrados y perfiles (seudonimizados)
 │   └── excluded/         # 3 cuestionarios rechazados en el Momento A
 ├── notebooks/
-│   ├── 00_momento_A.ipynb          # análisis y selección de los 6 documentos
+│   ├── 00_analisis_documentos.ipynb # Momento A: de los 6 documentos a la pregunta
 │   ├── 00_perfil_aceptados.ipynb   # Fase 1: inventario, perfil y diccionario
 │   ├── 01_limpieza.ipynb           # Fase 3: limpieza y codificación
 │   ├── 02_eda.ipynb                # Fase 4: integración, EDA, hipótesis y texto
@@ -45,13 +45,12 @@ Los datos son observacionales y auto-reportados (n = 19 en el núcleo integrado,
 │   ├── graficos.py                 # figuras con paleta apta para daltonismo
 │   ├── modelado.py                 # agrupamiento, estabilidad y PCA
 │   ├── tablero.py                  # KPI del tablero
-│   └── momento_a.py, anexos.py, exportar_docs.py
+│   └── analisis_documentos.py, anexos.py, exportar_docs.py
 ├── app/app.py            # tablero Streamlit + Plotly (KPI, perfiles y clasificaciones: artistas, plataformas, uso de IA)
-├── docs/
+├── docs/                 # se genera localmente; en Git solo se versionan las figuras
 │   ├── tecnico.{md,docx,pdf}       # método y resultados
-│   ├── negocio.{md,docx,pdf}       # problemática, KPI y recomendaciones
-│   ├── momento_A.{md,docx,pdf}     # selección de fuentes
-│   ├── figuras/                    # figuras del documento técnico
+│   ├── negocio.{md,docx,pdf}       # Momento A, problemática, KPI y recomendaciones
+│   ├── figuras/                    # figuras del documento técnico (sí se versionan)
 │   └── *.csv                       # matriz, diccionario, variables y pruebas
 ├── requirements.txt
 └── README.md
@@ -76,7 +75,7 @@ Los datos no forman parte del repositorio (ver [`data/README.md`](data/README.md
 Los cuadernos se ejecutan en orden desde `notebooks/`. En Windows hace falta `PYTHONUTF8=1`: sin esa variable, `jupyter-execute` lee el `.ipynb` con la codificación del sistema y corrompe los acentos del código.
 
 ```bash
-cd notebooks && PYTHONUTF8=1 ../.venv/Scripts/jupyter-execute --inplace 00_momento_A.ipynb 00_perfil_aceptados.ipynb 01_limpieza.ipynb 02_eda.ipynb 03_modelado.ipynb
+cd notebooks && PYTHONUTF8=1 ../.venv/Scripts/jupyter-execute --inplace 00_analisis_documentos.ipynb 00_perfil_aceptados.ipynb 01_limpieza.ipynb 02_eda.ipynb 03_modelado.ipynb
 ```
 
 Tablero interactivo (requiere haber ejecutado los cuadernos 01 a 03):
@@ -92,7 +91,7 @@ Regenerar el anexo del diccionario y los documentos en Word y PDF. El script usa
 ```
 
 ```bash
-.venv/Scripts/python src/exportar_docs.py docs/tecnico.md docs/negocio.md docs/momento_A.md
+.venv/Scripts/python src/exportar_docs.py docs/tecnico.md docs/negocio.md
 ```
 
 ## Publicar el tablero (Streamlit Community Cloud)

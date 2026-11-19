@@ -19,3 +19,7 @@ Thumbs.db
 
 # Configuración local de herramientas
 .claude/
+
+# Documentos: se generan localmente y no se suben a Git (solo las figuras)
+docs/*
+!docs/figuras/

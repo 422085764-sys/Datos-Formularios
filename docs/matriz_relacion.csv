@@ -1,7 +1,0 @@
-﻿doc,Documento,Tema central,Variables clave,¿Relación con música/ánimo/estrés/IA?,Llave compatible,Veredicto
-1,La música y su influencia en el estado de ánimo,Hábitos musicales y su efecto en el ánimo,"Género, horas/día, momentos, plataforma, ánimo antes/después, música ante estrés, energía, concentración, sueño","Sí, directa",Sí,ACEPTAR – principal
-2,Entorno Universitario y Bienestar,Bienestar emocional y contexto,"Desánimo, irritabilidad, sueño, concentración, apetito, apoyo social, traslados","Sí (ánimo, sueño, concentración, estrés indirecto)",Sí,ACEPTAR – complementario fuerte
-3,Desempeño académico por el uso de IA,Uso académico de la IA,"Horas de IA/día, herramientas, efecto en estrés, dependencia, guía vs. atajo","Sí (IA, estrés)",Sí,ACEPTAR – complementario medio
-4,Test,Personalidad y preferencias,"Pasatiempo, deporte, sociabilidad, decisiones, organización del tiempo, sexo",Marginal,Sí (1 duplicado),RECHAZAR
-5,Pelis y series,Preferencias audiovisuales,"Películas, series y actores favoritos/sobrevalorados",No,Sí,RECHAZAR
-6,Relación Amor – Carrera,Concepciones de pareja,"Situación sentimental, valores, señales de alerta, cita ideal",No,Solo vía correo,RECHAZAR
