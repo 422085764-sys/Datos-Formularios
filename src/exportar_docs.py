@@ -5,7 +5,8 @@ Uso (desde la raíz del proyecto):
 
 - .docx: pandoc (incluido en el paquete `pypandoc_binary`, no requiere instalación).
 - .pdf : si hay xelatex en el PATH se usa `--pdf-engine=xelatex`; si no, se genera
-         HTML con estilo y se imprime a PDF con Microsoft Edge en modo headless.
+         HTML con estilo y se imprime a PDF con un navegador Chromium (Edge, Chrome o
+         Chromium) en modo headless. Funciona en Windows, macOS y Linux.
 """
 import shutil
 import subprocess
@@ -32,10 +33,26 @@ tr { page-break-inside: avoid; }
 code { font-family: Consolas, monospace; font-size: 9pt; }
 """
 
-EDGE = [
+# Navegadores basados en Chromium que pueden imprimir HTML a PDF en modo headless,
+# en el orden en que se buscan (Windows, macOS y Linux).
+NAVEGADORES_RUTAS = [
     r"C:\Program Files (x86)\Microsoft\Edge\Application\msedge.exe",
     r"C:\Program Files\Microsoft\Edge\Application\msedge.exe",
+    r"C:\Program Files\Google\Chrome\Application\chrome.exe",
+    "/Applications/Microsoft Edge.app/Contents/MacOS/Microsoft Edge",
+    "/Applications/Google Chrome.app/Contents/MacOS/Google Chrome",
+    "/Applications/Chromium.app/Contents/MacOS/Chromium",
 ]
+NAVEGADORES_PATH = ["microsoft-edge", "microsoft-edge-stable", "google-chrome", "google-chrome-stable",
+                    "chromium", "chromium-browser"]
+
+
+def buscar_navegador() -> str | None:
+    """Ruta del primer navegador Chromium disponible (Edge, Chrome o Chromium), o None."""
+    for ruta in NAVEGADORES_RUTAS:
+        if Path(ruta).exists():
+            return ruta
+    return next((shutil.which(n) for n in NAVEGADORES_PATH if shutil.which(n)), None)
 
 
 def a_docx(md: Path) -> Path:
@@ -51,9 +68,10 @@ def a_pdf(md: Path) -> Path:
         pypandoc.convert_file(str(md), "pdf", outputfile=str(out),
                               extra_args=["--pdf-engine=xelatex", f"--resource-path={md.parent}"])
         return out
-    edge = next((p for p in EDGE if Path(p).exists()), None)
+    edge = buscar_navegador()
     if edge is None:
-        raise RuntimeError("No hay xelatex ni Microsoft Edge para generar el PDF.")
+        raise RuntimeError("Para el PDF se necesita xelatex (LaTeX) o un navegador Edge, Chrome o Chromium. "
+                           "Instala uno de ellos (ver README, sección Instalación). El .docx sí se generó.")
     with tempfile.TemporaryDirectory() as tmp:
         css = Path(tmp) / "estilo.css"
         css.write_text(CSS, encoding="utf-8")
