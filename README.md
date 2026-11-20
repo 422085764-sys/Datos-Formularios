@@ -112,6 +112,10 @@ Como `data/processed/` está en el repositorio, el tablero en la nube lee esos d
    - en **Secrets**, pega **todo** el contenido de `.streamlit/secrets.toml`.
 5. Pulsa **Deploy**. Las dependencias se instalan desde `app/requirements.txt`, una versión ligera con solo lo que usa el tablero.
 
+link del tablero:
+https://dashboard-musica.streamlit.app
+
+
 **Quién puede verlo:**
 
 - **Repositorio público:** la app es pública; cualquiera con el enlace la ve.
