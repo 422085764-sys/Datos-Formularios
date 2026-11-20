@@ -39,7 +39,7 @@ Los datos son observacionales y auto-reportados (n = 19 en el núcleo integrado,
 │   └── 03_modelado.ipynb           # Fase 5: perfiles (K-Means, PCA, DBSCAN)
 ├── src/
 │   ├── datos.py, diccionario.py    # rutas, carga y diccionario de variables
-│   ├── limpieza.py, codificacion.py# normalización y reglas de codificación
+│   ├── limpieza.py                 # normalización 
 │   ├── integracion.py, eda.py      # unión de documentos y pruebas estadísticas
 │   ├── texto.py                    # análisis de texto con NLTK
 │   ├── graficos.py                 # figuras con paleta apta para daltonismo
@@ -48,8 +48,8 @@ Los datos son observacionales y auto-reportados (n = 19 en el núcleo integrado,
 │   └── analisis_documentos.py, anexos.py, exportar_docs.py
 ├── app/app.py            # tablero Streamlit + Plotly (KPI, perfiles y clasificaciones: artistas, plataformas, uso de IA)
 ├── docs/                 # en Git: PDF técnico y de negocio, CSV y figuras
-│   ├── tecnico.{md,docx,pdf}       # método y resultados
-│   ├── negocio.{md,docx,pdf}       # Momento A, problemática, KPI y recomendaciones
+│   ├── tecnico.pdf       # método y resultados
+│   ├── negocio.pdf      # Análisis, problemática, KPI y recomendaciones
 │   ├── figuras/                    # figuras del documento técnico (sí se versionan)
 │   └── *.csv                       # matriz, diccionario, variables y pruebas
 ├── requirements.txt
@@ -69,8 +69,8 @@ py -m venv .venv
 #Activamos el entorno
 venv\Scripts\activate 
 
+pip install -r requirements.txt
 
-.venv/Scripts/python -m pip install -r requirements.txt
 ```
 
 Los datos forman parte del repositorio (ver [`data/README.md`](data/README.md)): los tres cuestionarios aceptados están en `data/raw/`, los tres rechazados del Momento A en `data/excluded/` y los conjuntos generados en `data/processed/`. Al clonar el repositorio, los cuadernos se pueden ejecutar sin copiar ningún archivo adicional.
