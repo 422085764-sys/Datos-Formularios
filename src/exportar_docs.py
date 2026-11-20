@@ -20,9 +20,11 @@ import pypandoc
 CSS = """
 @page { size: Letter; margin: 2.2cm 2cm; }
 body { font-family: 'Calibri', 'Segoe UI', sans-serif; font-size: 10.5pt; line-height: 1.45; color: #1a1a1a; }
-header#title-block-header { text-align: center; margin-bottom: 1.5em; }
-h1.title { font-size: 18pt; margin-bottom: .2em; }
-p.subtitle { font-style: italic; color: #444; margin-top: 0; }
+header#title-block-header { text-align: center; padding-top: 6cm; page-break-after: always; }
+h1.title { font-size: 22pt; margin-bottom: .4em; }
+p.subtitle { font-style: italic; color: #444; margin: 0 0 3em; font-size: 13pt; text-align: center; }
+p.author { text-align: center; margin: .25em 0; font-size: 12pt; }
+p.date { text-align: center; margin-top: 3em; color: #444; }
 h2 { font-size: 13.5pt; border-bottom: 1px solid #999; padding-bottom: 2px; margin-top: 1.4em; }
 h3 { font-size: 11.5pt; margin-top: 1.1em; }
 p { text-align: justify; }
