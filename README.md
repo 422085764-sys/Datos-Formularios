@@ -67,7 +67,7 @@ py -m venv .venv
 
 ```bash
 #Activamos el entorno
-venv\Scripts\activate 
+.venv\Scripts\activate 
 
 pip install -r requirements.txt
 
