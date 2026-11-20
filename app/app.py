@@ -23,7 +23,6 @@ import tablero as tb  # noqa: E402
 # Paleta validada (orden fijo; el color sigue a la entidad, nunca a su rango)
 AZUL, NARANJA, AQUA = "#2a78d6", "#eb6834", "#1baf7a"
 ORDINAL = {"bajo": "#86b6ef", "medio": "#3987e5", "alto": "#104281"}
-GRIS = "#898781"
 PERFIL_COLOR = {"P1 · Escucha intensiva": AZUL, "P2 · Estrés alto": NARANJA,
                 "P3 · IA como guía, estrés bajo": AQUA}
 
