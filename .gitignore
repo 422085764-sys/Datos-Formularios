@@ -1,6 +1,4 @@
-# Datos: contienen números de cuenta y correos (datos personales). Nunca se versionan.
-#data/*/*
-#!data/*/.gitkeep
+# Datos: se versionan (cuestionarios originales, excluidos y procesados)
 
 # Documentos: solo se suben los PDF, los CSV y las figuras
 docs/*

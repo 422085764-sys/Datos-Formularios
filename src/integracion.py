@@ -21,7 +21,7 @@ def cargar_limpios() -> dict[int, pd.DataFrame]:
 
 
 def integrar(dfs: dict[int, pd.DataFrame], docs: tuple[int, ...]) -> tuple[pd.DataFrame, pd.DataFrame]:
-    """Unión interna por seudónimo y reporte de registros conservados y perdidos por documento."""
+    """Unión interna por número de cuenta y reporte de registros conservados y perdidos por documento."""
     base = dfs[docs[0]]
     for d in docs[1:]:
         base = base.merge(dfs[d], on="id", how="inner", validate="one_to_one")

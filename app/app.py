@@ -402,8 +402,8 @@ with tabs[4]:
 
 with tabs[5]:
     st.markdown(f"""
-**Fuentes.** Tres cuestionarios (música y ánimo, n = 24; bienestar, n = 19; uso de IA, n = 24) unidos por un
-seudónimo irreversible. Los indicadores de bienestar solo existen para los 19 que respondieron los tres.
+**Fuentes.** Tres cuestionarios (música y ánimo, n = 24; bienestar, n = 19; uso de IA, n = 24) unidos por el
+número de cuenta. Los indicadores de bienestar solo existen para los 19 que respondieron los tres.
 
 **Codificación.** Las respuestas abiertas se convirtieron en escalas con reglas explícitas y revisadas una por una;
 lo que no se pudo codificar sin suponer queda como faltante. Nunca se imputa.

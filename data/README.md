@@ -1,10 +1,10 @@
 # Datos
 
-Los datos **no se publican** en este repositorio: las respuestas originales contienen números de cuenta y correos institucionales de los participantes. Solo se versiona la estructura de carpetas.
+Los datos **sí se suben** a este repositorio: los cuestionarios originales, los excluidos en el Momento A y los conjuntos procesados. Contienen números de cuenta y correos institucionales de los participantes; los documentos y el tablero solo presentan resultados agregados.
 
-## Archivos esperados
+## Archivos originales
 
-Para reproducir el proyecto, coloca los cuestionarios originales (exportados de Google Forms) con estos nombres exactos:
+Los cuestionarios originales (exportados de Google Forms) están en el repositorio con estos nombres:
 
 | Carpeta | Archivo | Uso |
 |---------|---------|-----|
@@ -19,10 +19,9 @@ Para reproducir el proyecto, coloca los cuestionarios originales (exportados de 
 
 ## Archivos generados
 
-- `raw/.clave_seudonimo`: clave secreta del seudónimo HMAC. Se crea la primera vez que se ejecuta `notebooks/01_limpieza.ipynb`. Para obtener los mismos identificadores en otra máquina, copia esta clave. **Nunca la publiques.**
-- `processed/`: conjuntos limpios (`doc*_clean.csv`), integrados (`integrado_*.csv`) y perfiles (`perfiles.csv`). Los generan los cuadernos 01 a 03. No contienen números de cuenta, pero sí respuestas abiertas, por lo que tampoco se publican.
+- `processed/`: conjuntos limpios (`doc*_clean.csv`), integrados (`integrado_*.csv`) y perfiles (`perfiles.csv`). Los generan los cuadernos 01 a 03 y también se versionan. La columna `id` es el número de cuenta.
 
 ## Despliegue del tablero
 
-Para publicar el tablero en Streamlit Community Cloud no se uben datos al repositorio. `python src/preparar_despliegue.py` genera `.streamlit/secrets.toml` (excluido de Git) con un conjunto mínimo de 24 filas y 49 columnas. Ese conjunto no tiene seudónimos ni respuestas abiertas, salvo los nombres de artistas, y su contenido se pega en la configuración de *Secrets* de la app. Ver la sección "Publicar el tablero" del README.
+Como `processed/` está en el repositorio, el tablero publicado en Streamlit Community Cloud lee esos archivos directamente. De forma opcional, `python src/preparar_despliegue.py` genera `.streamlit/secrets.toml` (excluido de Git) con un conjunto mínimo de 24 filas y 49 columnas. Ese conjunto no tiene números de cuenta ni respuestas abiertas, salvo los nombres de artistas, y su contenido se pega en la configuración de *Secrets* de la app. Ver la sección "Publicar el tablero" del README.
 

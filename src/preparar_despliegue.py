@@ -4,7 +4,7 @@ Uso (desde la raíz, después de ejecutar los cuadernos 01 a 03):
     python src/preparar_despliegue.py
 
 Escribe .streamlit/secrets.toml (excluido de Git). Su contenido se pega en
-Streamlit Community Cloud → la app → Settings → Secrets. Los datos nunca se suben al repositorio.
+Streamlit Community Cloud → la app → Settings → Secrets.
 """
 import re
 import sys

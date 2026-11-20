@@ -58,8 +58,8 @@ def base_publicable(base: pd.DataFrame, semilla: int = 42) -> pd.DataFrame:
     """Versión mínima de la base para el despliegue.
 
     - Solo las columnas que usa la app.
-    - El seudónimo se sustituye por un número consecutivo en orden aleatorio (sin vínculo con
-      el seudónimo ni con el orden de respuesta).
+    - El número de cuenta se sustituye por un número consecutivo en orden aleatorio (sin vínculo
+      con la cuenta ni con el orden de respuesta).
     - La lista libre de artistas se reduce a los nombres normalizados, separados por ';'.
     """
     from texto import artistas  # noqa: WPS433

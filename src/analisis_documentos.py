@@ -4,7 +4,7 @@ proyecto y, después, para elegir qué documentos se usan.
 
 Lo usa notebooks/00_analisis_documentos.ipynb. También se puede ejecutar como script:
     python src/analisis_documentos.py
-No imprime números de cuenta ni correos (anonimización).
+Solo imprime conteos: no muestra números de cuenta ni correos.
 """
 import re
 import sys

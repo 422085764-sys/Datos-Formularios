@@ -8,10 +8,7 @@ Principios:
 """
 from __future__ import annotations
 
-import hashlib
-import hmac
 import re
-import secrets
 import unicodedata
 from pathlib import Path
 
@@ -151,7 +148,7 @@ def escala_10(m, niveles: int) -> int:
 
 
 # --------------------------------------------------------------------------------------
-# Calidad: atípicos, copias y seudónimos
+# Calidad: atípicos y copias
 # --------------------------------------------------------------------------------------
 
 def atipicos_iqr(s: pd.Series, k: float = 1.5) -> pd.Series:
@@ -174,20 +171,3 @@ def respuestas_copiadas(df: pd.DataFrame, columnas: list[str], min_palabras: int
         n.loc[largas[largas.duplicated(keep=False)].index] += 1
     return n
 
-
-def clave_seudonimo(ruta: Path) -> bytes:
-    """Lee (o crea una sola vez) la clave secreta para seudonimizar. Vive en data/ (fuera de Git)."""
-    if not ruta.exists():
-        ruta.write_text(secrets.token_hex(32), encoding="utf-8")
-    return bytes.fromhex(ruta.read_text(encoding="utf-8").strip())
-
-
-def seudonimo(cuenta, clave: bytes) -> str | None:
-    """HMAC-SHA256 del número de cuenta, truncado a 12 caracteres hexadecimales.
-
-    Es determinista (la misma cuenta produce el mismo id en los tres documentos, lo que
-    permite la integración) e irreversible sin la clave.
-    """
-    if pd.isna(cuenta):
-        return None
-    return hmac.new(clave, str(int(cuenta)).encode(), hashlib.sha256).hexdigest()[:12]

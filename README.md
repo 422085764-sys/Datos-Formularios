@@ -22,14 +22,14 @@ El proyecto cubre el ciclo completo:
 - **Tres perfiles de estudiantes** (K-Means, silueta de 0.28): escucha intensiva, estrés alto, e IA como guía con estrés bajo.
 - **Preferencias:** Bad Bunny es el artista más mencionado (4 de 24), YouTube la plataforma más usada (13), el ritmo lo que más influye de una canción (19) y la investigación o resolución de dudas el uso principal de la IA (16).
 
-Los datos son observacionales y auto-reportados (n = 19 en el núcleo integrado, 24 en música + IA). Los resultados son **asociaciones exploratorias**: ninguna supera la corrección por comparaciones múltiples y no implican causalidad. Ver `docs/tecnico.pdf` y `docs/negocio.pdf`, que se generan localmente y no se suben a Git.
+Los datos son observacionales y auto-reportados (n = 19 en el núcleo integrado, 24 en música + IA). Los resultados son **asociaciones exploratorias**: ninguna supera la corrección por comparaciones múltiples y no implican causalidad. Ver `docs/tecnico.pdf` y `docs/negocio.pdf`, que sí se suben a Git.
 
 ## Estructura
 
 ```
-├── data/                 # no se versiona (contiene números de cuenta)
-│   ├── raw/              # 3 cuestionarios aceptados + clave del seudónimo
-│   ├── processed/        # datos limpios, integrados y perfiles (seudonimizados)
+├── data/                 # datos del proyecto (sí se versionan)
+│   ├── raw/              # 3 cuestionarios aceptados
+│   ├── processed/        # datos limpios, integrados y perfiles
 │   └── excluded/         # 3 cuestionarios rechazados en el Momento A
 ├── notebooks/
 │   ├── 00_analisis_documentos.ipynb # Momento A: de los 6 documentos a la pregunta
@@ -47,7 +47,7 @@ Los datos son observacionales y auto-reportados (n = 19 en el núcleo integrado,
 │   ├── tablero.py                  # KPI del tablero
 │   └── analisis_documentos.py, anexos.py, exportar_docs.py
 ├── app/app.py            # tablero Streamlit + Plotly (KPI, perfiles y clasificaciones: artistas, plataformas, uso de IA)
-├── docs/                 # se genera localmente; en Git solo se versionan las figuras
+├── docs/                 # en Git: PDF técnico y de negocio, CSV y figuras
 │   ├── tecnico.{md,docx,pdf}       # método y resultados
 │   ├── negocio.{md,docx,pdf}       # Momento A, problemática, KPI y recomendaciones
 │   ├── figuras/                    # figuras del documento técnico (sí se versionan)
@@ -73,7 +73,7 @@ venv\Scripts\activate
 .venv/Scripts/python -m pip install -r requirements.txt
 ```
 
-Los datos no forman parte del repositorio (ver [`data/README.md`](data/README.md) para los nombres exactos de los archivos). Hay que colocar los tres cuestionarios aceptados en `data/raw/` y, para reproducir el Momento A, los tres rechazados en `data/excluded/`. La primera ejecución de la limpieza crea la clave del seudónimo en `data/raw/.clave_seudonimo`. Para obtener los mismos identificadores en otra máquina, hay que copiar esa clave.
+Los datos forman parte del repositorio (ver [`data/README.md`](data/README.md)): los tres cuestionarios aceptados están en `data/raw/`, los tres rechazados del Momento A en `data/excluded/` y los conjuntos generados en `data/processed/`. Al clonar el repositorio, los cuadernos se pueden ejecutar sin copiar ningún archivo adicional.
 
 ## Ejecución
 
@@ -92,10 +92,10 @@ Tablero interactivo (requiere haber ejecutado los cuadernos 01 a 03):
 
 ## Publicar el tablero (Streamlit Community Cloud)
 
-El repositorio **no contiene datos**. Para que el tablero funcione en la nube, se le entrega un conjunto mínimo como *secreto* de Streamlit, que vive en la configuración de la app y no en GitHub. Ese conjunto tiene:
+Como `data/processed/` está en el repositorio, el tablero en la nube lee esos datos directamente. De forma opcional, se le puede entregar un conjunto mínimo como *secreto* de Streamlit, que vive en la configuración de la app y la app usa solo si no encuentra `data/processed/`. Ese conjunto tiene:
 
 - solo las 49 columnas que usa el tablero;
-- un número consecutivo en orden aleatorio en lugar del seudónimo;
+- un número consecutivo en orden aleatorio en lugar del número de cuenta;
 - ninguna respuesta abierta, salvo los nombres de artistas normalizados.
 
 1. Genera el secreto en tu equipo, después de ejecutar los cuadernos 01 a 03:
@@ -141,8 +141,8 @@ bash scripts/reescribir_historial.sh --simular --email TU_ID+usuario@users.norep
 
 ## Privacidad
 
-- Los números de cuenta se sustituyen por un seudónimo HMAC-SHA256 con clave secreta, que no se versiona.
-- Los cuadernos y el tablero muestran solo información agregada y ocultan cualquier selección con menos de 3 estudiantes.
+- Los datos (crudos y procesados) se versionan en `data/`; el número de cuenta es la llave que une los tres cuestionarios.
+- Los documentos, los cuadernos y el tablero muestran solo información agregada y ocultan cualquier selección con menos de 3 estudiantes.
 
 ## Curso y autores
 

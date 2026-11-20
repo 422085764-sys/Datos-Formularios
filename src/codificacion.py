@@ -3,7 +3,7 @@
 Cada diccionario REGLAS_* contiene listas (regex sobre texto normalizado, valor), evaluadas
 en orden. El orden importa: las expresiones más específicas (negaciones, matices) van
 antes que las generales. Las funciones `limpiar_docN` devuelven el DataFrame limpio con:
-  - id (seudónimo), sin número de cuenta;
+  - id (número de cuenta), llave para unir los documentos;
   - columnas originales de texto (para el análisis descriptivo de texto);
   - columnas codificadas (sufijos _cod, _h, _min, banderas con prefijo);
   - banderas de calidad (atípicos, respuestas copiadas).
@@ -16,7 +16,7 @@ import numpy as np
 import pandas as pd
 
 from limpieza import (a_entero, a_horas, a_minutos, a_semestre, atipicos_iqr, banderas,
-                      codificar, escala_10, normalizar, respuestas_copiadas, seudonimo)
+                      codificar, escala_10, normalizar, respuestas_copiadas)
 
 # ======================================================================================
 # Documento 1 — Música y estado de ánimo
@@ -132,9 +132,9 @@ def corregir_cuenta_invalida(cuentas: pd.Series, referencia: set) -> tuple[pd.Se
     return corregidas, n
 
 
-def limpiar_doc1(df: pd.DataFrame, clave: bytes) -> pd.DataFrame:
+def limpiar_doc1(df: pd.DataFrame) -> pd.DataFrame:
     out = df.copy()
-    out["id"] = out["cuenta"].map(lambda c: seudonimo(c, clave))
+    out["id"] = out["cuenta"].astype("Int64")
     out["m_horas"] = out["m_horas_dia"].map(a_horas)
     out["m_horas_nivel"] = pd.cut(out["m_horas"], [-0.01, 1.99, 4, np.inf],
                                   labels=["baja", "media", "alta"]).astype("string")
@@ -250,9 +250,9 @@ def nivel_iep(x: float):
     return "bajo" if x < 1.5 else ("medio" if x <= 2.5 else "alto")
 
 
-def limpiar_doc2(df: pd.DataFrame, clave: bytes) -> pd.DataFrame:
+def limpiar_doc2(df: pd.DataFrame) -> pd.DataFrame:
     out = df.copy()
-    out["id"] = out["cuenta"].map(lambda c: seudonimo(c, clave))
+    out["id"] = out["cuenta"].astype("Int64")
     out["b_semestre_cod"] = out["b_semestre"].map(a_semestre)
     out["b_edad_cod"] = out["b_edad"].map(a_entero)
     out["b_traslado_min_cod"] = out["b_traslado_min"].map(a_minutos)
@@ -345,9 +345,9 @@ def motivo_ia(texto):
     return "ambos" if tiempo and comp else "tiempo" if tiempo else "comprension" if comp else "otro"
 
 
-def limpiar_doc3(df: pd.DataFrame, clave: bytes) -> pd.DataFrame:
+def limpiar_doc3(df: pd.DataFrame) -> pd.DataFrame:
     out = df.copy()
-    out["id"] = out["cuenta"].map(lambda c: seudonimo(c, clave))
+    out["id"] = out["cuenta"].astype("Int64")
     out["ia_horas"] = out["ia_horas_dia"].map(a_horas)
     out["ia_semestre_inicio_cod"] = out["ia_semestre_inicio"].map(a_semestre)
     for var, reglas in REGLAS_D3.items():
