@@ -61,10 +61,15 @@ Los datos son observacionales y auto-reportados (n = 19 en el núcleo integrado,
 Requiere Python 3.14. En Windows, el lanzador es `py`.
 
 ```bash
+
 py -m venv .venv
 ```
 
 ```bash
+#Activamos el entorno
+venv\Scripts\activate 
+
+
 .venv/Scripts/python -m pip install -r requirements.txt
 ```
 
