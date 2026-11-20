@@ -2,6 +2,13 @@
 #data/*/*
 #!data/*/.gitkeep
 
+# Documentos: solo se suben los PDF, los CSV y las figuras
+docs/*
+!docs/figuras/
+!docs/negocio.pdf
+!docs/tecnico.pdf
+!docs/*.csv
+
 # Entorno y cachés de Python
 .venv/
 __pycache__/

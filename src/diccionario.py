@@ -11,7 +11,7 @@ _FILAS = [
     # doc, P, variable, pregunta (resumida), respuesta, codificación prevista, uso
     # ---------------- Documento 1: Música y estado de ánimo ----------------
     (1, "-", "marca_temporal", "Marca temporal", "Fecha y hora", "datetime", "Control"),
-    (1, "-", "cuenta", "Número de cuenta", "Entero", "Llave; se anonimiza con hash", "Llave"),
+    (1, "-", "cuenta", "Número de cuenta", "Entero", "Llave para unir los documentos", "Llave"),
     (1, "P1", "m_genero_frecuente", "Tipo de música que escucha con mayor frecuencia y por qué", "Texto libre", "Grupo de género musical (palabras clave)", "H3, KPI géneros, filtro"),
     (1, "P2", "m_horas_dia", "Tiempo diario dedicado a escuchar música", "Numérica en texto", "Horas (float) con regex", "H2, KPI horas"),
     (1, "P3", "m_momentos", "Momentos del día y actividades mientras escucha", "Multirrespuesta en texto", "Banderas: estudio, traslado, ejercicio, descanso, trabajo", "H2"),
@@ -30,7 +30,7 @@ _FILAS = [
     (1, "P16", "m_artistas", "Cinco artistas más escuchados", "Lista en texto", "No se modela (solo NLP descriptivo)", "Descriptivo"),
     # ---------------- Documento 2: Entorno universitario y bienestar ----------------
     (2, "-", "marca_temporal", "Marca temporal", "Texto (fecha GMT-6)", "datetime", "Control"),
-    (2, "-", "cuenta", "Número de cuenta", "Entero", "Llave; se anonimiza con hash", "Llave"),
+    (2, "-", "cuenta", "Número de cuenta", "Entero", "Llave para unir los documentos", "Llave"),
     (2, "P2", "b_carrera", "Carrera que cursa", "Categórica en texto", "Normalizar a 'MAC' (validación)", "Filtro de población"),
     (2, "P3", "b_semestre", "Semestre", "Numérica en texto", "Entero", "Filtro (constante = 7)"),
     (2, "P4", "b_edad", "Edad", "Numérica en texto", "Entero (incluye números escritos)", "Contexto"),
@@ -48,7 +48,7 @@ _FILAS = [
     (2, "P16", "b_concentracion_dif", "Dificultad para concentrarse", "Ordinal en texto", "0 ninguna a 3 mucha", "H2, bienestar"),
     # ---------------- Documento 3: Desempeño académico por el uso de IA ----------------
     (3, "-", "marca_temporal", "Marca temporal", "Texto (fecha GMT-6)", "datetime", "Control"),
-    (3, "-", "cuenta", "Número de cuenta", "Entero", "Llave; se anonimiza con hash", "Llave"),
+    (3, "-", "cuenta", "Número de cuenta", "Entero", "Llave para unir los documentos", "Llave"),
     (3, "P2", "ia_herramientas", "Herramientas de IA que utiliza y frecuencia", "Multirrespuesta en texto", "Banderas: ChatGPT, Gemini, otras; n.º de herramientas", "Descriptivo, KPI"),
     (3, "P3", "ia_fase_uso", "Fase del estudio en que más usa la IA", "Multirrespuesta en texto", "Banderas: investigación, estructura, redacción, corrección, repaso", "Descriptivo"),
     (3, "P4", "ia_cambio_estudio", "Cómo cambió su estudio con la IA", "Texto libre", "No se modela (NLP descriptivo)", "Descriptivo"),
