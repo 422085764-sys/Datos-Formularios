@@ -142,7 +142,6 @@ bash scripts/reescribir_historial.sh --simular --email TU_ID+usuario@users.norep
 ## Privacidad
 
 - Los números de cuenta se sustituyen por un seudónimo HMAC-SHA256 con clave secreta, que no se versiona.
-- La carpeta `data/` está excluida de Git.
 - Los cuadernos y el tablero muestran solo información agregada y ocultan cualquier selección con menos de 3 estudiantes.
 
 ## Curso y autores

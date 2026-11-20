@@ -24,8 +24,5 @@ Para reproducir el proyecto, coloca los cuestionarios originales (exportados de 
 
 ## Despliegue del tablero
 
-Para publicar el tablero en Streamlit Community Cloud no se suben datos al repositorio. `python src/preparar_despliegue.py` genera `.streamlit/secrets.toml` (excluido de Git) con un conjunto mínimo de 24 filas y 49 columnas. Ese conjunto no tiene seudónimos ni respuestas abiertas, salvo los nombres de artistas, y su contenido se pega en la configuración de *Secrets* de la app. Ver la sección "Publicar el tablero" del README.
+Para publicar el tablero en Streamlit Community Cloud no se uben datos al repositorio. `python src/preparar_despliegue.py` genera `.streamlit/secrets.toml` (excluido de Git) con un conjunto mínimo de 24 filas y 49 columnas. Ese conjunto no tiene seudónimos ni respuestas abiertas, salvo los nombres de artistas, y su contenido se pega en la configuración de *Secrets* de la app. Ver la sección "Publicar el tablero" del README.
 
-## Acceso a los datos
-
-Los datos se recolectaron con fines académicos en un grupo de 7.º semestre de MAC, FES Acatlán, UNAM. Para solicitarlos, contacta a los autores del proyecto.

@@ -1,6 +1,6 @@
 # Datos: contienen números de cuenta y correos (datos personales). Nunca se versionan.
-data/*/*
-!data/*/.gitkeep
+#data/*/*
+#!data/*/.gitkeep
 
 # Entorno y cachés de Python
 .venv/
